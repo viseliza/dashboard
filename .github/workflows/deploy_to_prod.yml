@@ -1,0 +1,36 @@
+name: deploy_to_prod
+on:
+  workflow_dispatch:
+  push:
+    branches: [ master ]
+jobs:
+  deploy_to_dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to PROD server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PROD_PK }}
+          REMOTE_HOST: ${{ secrets.PROD_HOST }}
+          REMOTE_USER: ${{ secrets.PROD_USER }}
+          REMOTE_PORT: ${{ secrets.PROD_PORT }}
+          SOURCE: ./*
+          TARGET: /home/cicd/tmp/pennoe_payment-client
+
+      - name: Restart service
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          privateKey: ${{ secrets.PROD_PK }}
+          port: ${{ secrets.PROD_PORT }}
+          command: |
+            rm -rf /home/cicd/projects/pennoe_payment-client
+            mkdir -p /home/cicd/projects/pennoe_payment-client
+            cp -r /home/cicd/tmp/pennoe_payment-client /home/cicd/projects/
+            rm -rf /home/cicd/tmp/pennoe_payment-client
+            cd /home/cicd/projects/pennoe_payment-client/ && npm i && npx nuxi build
+            sudo systemctl restart pennoe_payment-client.service
