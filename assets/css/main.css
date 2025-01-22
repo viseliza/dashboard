@@ -1,0 +1,25 @@
+@tailwind base;
+
+@layer base {
+    * {
+        font-family: "Open Sans", sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    a {
+        text-decoration: none;
+    }
+}
+@tailwind components;
+@tailwind utilities;
+
+.bg-warm-gradient {
+    background: -webkit-linear-gradient(90deg, #eae6ff,#f4f4f4);
+    background: linear-gradient(90deg, #eae6ff,#f4f4f4);
+}
+
+.bg-gradient-base {
+    background: -webkit-linear-gradient(75deg,#eae9f6,#ebebeb); 
+    background: linear-gradient(75deg,#eae9f6,#ebebeb);
+}

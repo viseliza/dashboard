@@ -1,24 +1,8 @@
 <template>
-	<section class="main_container">
-        <section class="content">
+	<section id="background" class="w-full h-screen flex justify-center items-center bg-gradient-base">
+        <section id="content" class="h-[500px] w-[700px] bg-white shadow-dark rounded-[15px] flex justify-between relative">
             <slot>
             </slot>
         </section>
 	</section>
 </template>
-
-
-<style scoped>
-    .main_container {
-        height: 100vh;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-image: linear-gradient(to bottom right, #FDFCFB, #E2D1C3);
-    }
-    .content {
-        padding: 20px;
-        
-    }
-</style>

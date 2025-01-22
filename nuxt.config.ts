@@ -29,8 +29,17 @@ export default defineNuxtConfig({
   },
   css: [
     '~/assets/fonts/openSans.css',
+    '~/assets/fonts/poppins.css',
     '~/assets/css/style.css',
+    '~/assets/css/main.css',
   ],
 
   compatibilityDate: '2024-10-09',
+
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
 })
