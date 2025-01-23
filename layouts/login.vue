@@ -1,6 +1,6 @@
 <template>
 	<section id="background" class="w-full h-screen flex justify-center items-center bg-gradient-base">
-        <section id="content" class="w-full sm:h-[500px] sm:w-[700px] sm:bg-white sm:shadow-dark sm:rounded-[15px] flex flex-col     sm:flex-row relative">
+        <section id="content" class="w-full sm:h-[500px] sm:w-[700px] sm:bg-white sm:shadow-dark sm:rounded-[15px] flex flex-col sm:flex-row relative">
             <slot>
             </slot>
         </section>
@@ -8,7 +8,7 @@
 </template>
 
 <style scoped>
-    @media (width <= 640px) {
+    @media (max-width: 480px) {
         #content {
             margin: 10px;
             height: calc(100vh - 20px);

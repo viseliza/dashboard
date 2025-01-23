@@ -5,17 +5,21 @@
         layout: 'login'
     })
 
+    useHead({
+        title: 'Панель - Вход'
+    });
+
     const loginValue = ref<string>('');
     const passwordValue = ref<string>('');
 </script>
 
 
 <template>
-    <section class="m-[10px] sm:m-[7px] sm:flex-[1_1_50%] aspect-[1.5/1] sm:ascpect-auto bg-gradient-base bg-repeat rounded-[15px] flex flex-col gap-[10px] justify-center items-center shadow-inset">
+    <section class="m-[10px] sm:m-[7px] sm:flex-[1_1_50%] aspect-[1.5/1] sm:aspect-auto bg-gradient-base bg-repeat rounded-[15px] flex flex-col gap-[10px] justify-center items-center">
         <div class="my-class opacity-70"></div>
     </section>
 
-    <section class="flex flex-col gap-[30px] justify-center items-center ml-[7px] mr-[14px] sm:flex-[1_1_50%]">
+    <section class="flex flex-col gap-[30px] justify-center items-center ml-[10px] mr-[17px] sm:flex-[1_1_50%]">
         <section id="header" class="flex flex-col justify-center items-center">
             <h1 class="text-[24px]">Добро пожаловать</h1>
             <h2 class="text-[16px]">в панель 
