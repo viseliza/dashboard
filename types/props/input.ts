@@ -1,10 +1,8 @@
 /** Интерфейс описывающий поля компонента инпута
- * @param  {string} name
- * @param  {string} placeholder
- * @param  {string} value - значение вводимого текста
+ * @param  {string} modelValue - значение вводимого текста
+ * @param  {string | undefined} label - название поля инпута
  */
 export interface InputProps {
-    name: string;
-    placeholder: string;
-    value: any;
+    modelValue: string;
+    label?: string;
 }

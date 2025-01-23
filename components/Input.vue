@@ -1,16 +1,20 @@
-<script lang="ts" setup>
+<script setup lang="ts">
     import type { InputProps } from '~/types';
     
-    const props = withDefaults(defineProps<InputProps>(), {
-        title: "login",
-        placeholder: "Логин",
-        value: ref("")
-    });
-    
+    const props = defineProps<InputProps>();
+    const emit = defineEmits(['update:modelValue']);
+
+    const updateValue = (value: string) => {
+        emit('update:modelValue', value);
+    };
 </script>
 
 <template>
-    <v-text-field label="Another input"></v-text-field>
+    <v-text-field 
+        :label="label"
+        :model-value="modelValue"
+        @update:model-value="updateValue"
+    ></v-text-field>
 </template>
 
 <style lang="scss" scoped>

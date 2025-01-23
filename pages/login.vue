@@ -1,29 +1,42 @@
 <script setup lang="ts">
-    import Input from '~/components/Input.vue'; "@/components/Input.vue"
+    import Input from '~/components/Input.vue';
 
     definePageMeta({
         layout: 'login'
     })
+
+    const loginValue = ref<string>('');
+    const passwordValue = ref<string>('');
 </script>
 
 
 <template>
-    <section id="left" class="m-[7px] flex-[1_1_50%] rounded-[15px] flex flex-col gap-[10px] justify-center items-center bg-gradient-base bg-repeat">
+    <section class="m-[10px] sm:m-[7px] sm:flex-[1_1_50%] aspect-[1.5/1] sm:ascpect-auto bg-gradient-base bg-repeat rounded-[15px] flex flex-col gap-[10px] justify-center items-center shadow-inset">
         <div class="my-class opacity-70"></div>
-        <span class="text-[20px]">Панелька</span>
     </section>
 
-    <section id="right" class="flex flex-col gap-[20px] justify-center items-center m-[7px] flex-[1_1_50%]">
+    <section class="flex flex-col gap-[30px] justify-center items-center ml-[7px] mr-[14px] sm:flex-[1_1_50%]">
         <section id="header" class="flex flex-col justify-center items-center">
-            <h1>Добро пожаловать</h1>
-            <h2>в панель «<span class="text-[#f9bc4a]">Пенного»</span></h2>
+            <h1 class="text-[24px]">Добро пожаловать</h1>
+            <h2 class="text-[16px]">в панель 
+                «<span class="text-[16px] text-[#f9bc4a]">Пенного</span>»
+            </h2>
         </section>
 
         <section class="flex flex-col w-full">
-            <Input/>
+            <Input
+                v-model="loginValue"
+                label="Логин"
+            />
+            
+            <Input
+                v-model="passwordValue"
+                label="Пароль"
+            />
         </section>
-
-        <button>
+        <button 
+            class="w-full transition-all duration-500  rounded-[12px] py-[15px] text-[#fff] font-bold text-[14px] bg-gradient-to-tl from-[#ff7300] via-[#2e3357] to-[#000000] bg-size-200 bg-pos-0 hover:bg-pos-50 active:bg-100"
+        >
             Войти
         </button>
     </section>
@@ -34,14 +47,6 @@
     .my-class {
         width: 100px;
         height: 100px;
-        background-image: url('~/assets/images/logos/pennoe.svg');
-    }
-
-    h1 {
-        font-size: 24px;
-    }
-
-    span, h2 {
-        font-size: 16px;
+        background: url('~/assets/images/logos/pennoe.svg');
     }
 </style>
