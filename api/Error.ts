@@ -7,15 +7,18 @@ const ERRORS: ErrorMessages = {
 }
 
 export class AppError extends Error {
-    code;
+    detail: string;
+    code: number;
 
     /** Инициализация класса
      * 
+     * @param {string} detail 
      * @param {string} message 
      * @param {number} code 
      */
-    constructor(message: string, code: number) {
+    constructor(detail: string, message: string, code: number) {
         super(message);
+        this.detail = detail;
         this.code = code;
     }
 
@@ -28,9 +31,9 @@ export class AppError extends Error {
         const { detail } = json;
         
         if (Object.keys(ERRORS).indexOf(detail as string) !== -1) 
-            throw new AppError(ERRORS[detail as keyof ErrorMessages], response.status);
+            throw new AppError(detail, ERRORS[detail as keyof ErrorMessages], response.status);
 
         if (detail === 'error' && !detail.includes('Успешно'))
-            throw new AppError(detail, 500);
+            throw new AppError(detail, 'Ошибка сервера', 500);
     }
 }

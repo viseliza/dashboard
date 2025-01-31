@@ -1,5 +1,24 @@
+<script setup lang="ts">
+	import Sidebar from '~/components/Sidebar.vue';
+</script>
+
 <template>
-	<section class="flex justify-center items-center min-w-full min-h-screen">
-		<slot></slot>
-	</section>
+	<div class="app">
+		<Sidebar/>
+
+		<slot>
+	
+		</slot>
+	</div>
+		
 </template>
+
+<style lang="scss" scoped>
+	.app {
+		background: var(--background);
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		padding-left: 88px;
+	}
+</style>

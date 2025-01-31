@@ -14,3 +14,28 @@ export interface ITokens {
     tokens: TokensParams;
     updateTokens(tokens?: TokensParams): void;
 }
+
+export type ErrorMessage = {
+    detail: string;
+    message: string;
+    code: number;
+}
+
+export type SearchDump = {
+    query?: string;
+    limit: number;
+    offset: number;
+}
+
+export type Wipe = {
+    confirmation: boolean;
+}
+
+export type WipeAnswer = {
+    status: string;
+}
+
+export type DumpData<T> = {
+    data: Array<T>;
+    count: number;
+}

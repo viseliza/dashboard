@@ -3,9 +3,8 @@ import { AppError } from './Error.js';
 import { Tokens } from '@/models';
 
 export class TemplateAPI {
-    /** @type {string} */
     static x_token: string;
-    static API = new URL('https://dev.pennoe.bot/api');
+    static API = new URL('https://pennoe.org/api');
 
     /** Инициализация основного класса
      * 
@@ -49,10 +48,7 @@ export class TemplateAPI {
         
         response = await fetch(url, init);
         const json = await response.json();
-        
-        if (json['detail'])
-            console.log(json.detail)
-               
+
         if (!json['detail']) {
             delete json.msg;
             delete json.code;
@@ -61,7 +57,7 @@ export class TemplateAPI {
         
         AppError.check(json, response);
 
-        throw new AppError(json.msg, response.status);
+        throw new AppError(json.detail, json.msg, response.status);
     }
 
 
@@ -72,13 +68,13 @@ export class TemplateAPI {
      * @param {any} tokens - Настоящие access и refresh токены
      * @returns - Результат функции и новых/выбранных токенов
      */
-    async privateCall(callback, params = {}, tokens) {
+    async privateCall(callback: any, params: any = {}, tokens: TokensParams) {
         try {
             return {
                 tokens,
                 callbackResult: await callback(params, tokens.access_token)
             };
-        } catch (error) {
+        } catch (error: any) {
             if (error.code == 401 || error.code == 403 || error.status == 302) {
                 const newTokens = await this.refreshAccessToken(tokens);
                 const callbackResult = await callback(params, tokens.access_token);

@@ -1,2 +1,66 @@
 body {
+    position: relative;
 }
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.input-box-label {
+    font-weight: 700;
+    font-size: 12px;
+    color: #000;
+}
+
+.input-box-content {
+    display: flex;
+    flex-direction: row;
+    border-radius: 5px;
+    background: linear-gradient(
+        70deg, 
+        #d1d1cc 0%, 
+        #dcdddb 20%, 
+        #e7e7e2 40%, 
+        #e5e8ed 60%,
+        #f0f0f2 75%, 
+        #e5e8ed 100%
+    ); /* Основной градиент */
+    background-size: 200% 100%; /* Размер в два раза больше для анимации */
+    background-position: 0 0; /* Начальная позиция */
+    transition: background-position 0.3s linear;
+
+    &.focus {
+        background-position: 100% 0%; /* Смещение позиции при фокусе */
+    }
+}
+
+.input-field {
+    flex: 1 1 auto;
+    border: none;
+    outline: none;
+    padding: 10px 16px;
+    font-size: 14px;
+}
+
+.input-button {
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+
+    .v-icon {
+        color: #5c5c5c;
+        transition: all 0.3s ease;
+    }
+
+    &.icon-active {
+        .v-icon {
+            color: #505050;
+        }
+    }
+}
+

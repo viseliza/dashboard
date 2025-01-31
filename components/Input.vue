@@ -1,23 +1,52 @@
 <script setup lang="ts">
-    import type { InputProps } from '~/types';
+    import type { InputProps, InputTypeProps } from '~/types';
     
-    const props = defineProps<InputProps>();
-    const emit = defineEmits(['update:modelValue']);
+    const props = defineProps<InputProps & InputTypeProps>();
+    const show = shallowRef(true);
+    const model = defineModel<string>({ default: '' });
 
-    const updateValue = (value: string) => {
-        emit('update:modelValue', value);
-    };
+    const focus = shallowRef(false);
 </script>
 
 <template>
-    <v-text-field 
-        :label="label"
-        :model-value="modelValue"
-        @update:model-value="updateValue"
-    ></v-text-field>
+    <div class="input-box">
+        <span class="input-box-label">{{ label }}</span>
+        
+        <div :class="['input-box-content', focus ? 'focus' : '']">
+            <input 
+                class="input-field" 
+                v-model="model"
+                :type="inputType == 'password' ? (show ? 'password' : 'text') : 'text'"
+                :placeholder="'Введите свой ' + (inputType === 'password' ? 'пароль' : 'логин')"
+                @focusin="focus = true"
+                @focusout="focus = false"
+            >
+            <button 
+                v-if="inputType == 'password'"
+                class="input-button"
+                :class="{ 'icon-active': !show }"
+                @click.prevent="show = !show"
+            >
+                <v-icon>
+                    {{ show ? 'mdi-eye' : 'mdi-eye-off' }}
+                </v-icon>
+            </button>
+        </div>
+    </div>
 </template>
 
 <style lang="scss" scoped>
+    input {
+        outline: none;
+    }
+    input::placeholder {
+        color: #888;
+    }
+
+    .input-box-content {
+        border-radius: 10px;
+    }
+
     .v-text-field {
         ::v-deep .v-field, ::v-deep .v-label {
             font-size: 14px;
@@ -33,6 +62,10 @@
 
         ::v-deep .v-field__overlay {
             border-radius: 5px;
+        }
+        
+        ::v-deep .v-input {
+            background-color: #000;
         }
     }
 </style>
