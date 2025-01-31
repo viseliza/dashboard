@@ -1,17 +1,23 @@
 <script lang="ts" setup>
     import Header from '~/components/Header.vue';
-import { ServiceItem } from '~/models';
+    import { PennoeAPI, TemplateAPI } from '~/api';
+    import { ServiceItem, Tokens } from '~/models';
+    import type { ErrorMessage } from '~/types';
 
     useHead({
         title: 'Панель - Проекты'
     });
 
+    const api = new PennoeAPI(TemplateAPI.x_token);
+    const error = ref();
+    let services: Array<ServiceItem> = [];
 
-    
-    const service = new ServiceItem({
-        code: 'aptekiplus',
-        name: 'Аптеки Плюс'
-    });
+    try {
+        const tokens = Tokens.getTokens();
+        services = await api.getServices('', tokens.access_token);
+    } catch (e: any) {
+        error.value = e as ErrorMessage;
+    }
 </script>
 
 <template>
@@ -20,6 +26,8 @@ import { ServiceItem } from '~/models';
     <main>
         <div class="cards-container">
             <Card
+                v-for="service in services"
+                :key="service.code"
                 :service="service"
             />
         </div>
@@ -35,5 +43,6 @@ import { ServiceItem } from '~/models';
     .cards-container {
         display: flex;
         flex-direction: row;
+        gap: 20px;
     }
 </style>

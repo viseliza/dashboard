@@ -27,11 +27,12 @@
 
 <template>
     <div
-    :style="{ background: data[service.code] ? data[service.code].color : data['default'].color }"
         class="card-container"
     >
         <div  
-        class="card-header">
+            :style="{ background: data[service.code] ? data[service.code].color : data['default'].color }"
+            class="card-header"
+        >
             <img :src="data[service.code] ? data[service.code].path : data['default'].path" alt="">
         </div>
 
@@ -59,13 +60,13 @@
     }
     .card-container .card-content {
         padding: 15px 20px;
-        color: var(--inversion-color);
+        color: var(--text-primary);
         position: relative;
         border-radius: 0 0 15px 15px;
-        background: rgba( 255, 255, 255, 0.4 );
-        box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-        backdrop-filter: blur( 20px );
-        -webkit-backdrop-filter: blur( 20px );
+        background: linear-gradient(90deg, rgba(39, 96, 211, .5), rgba(18, 131, 202, .5));
+        backdrop-filter: blur( 14px );
+        -webkit-backdrop-filter: blur( 14px );
+        border: 1px solid rgba( 255, 255, 255, 0.18 );
     }
     .card-container .card-content h1 {
         font-size: 18px;
@@ -73,7 +74,7 @@
         letter-spacing:  .5px;
     }
     .card-container .card-content h2 {
-        color: var(--inversion-color);
+        color: var(--text-secondary);
         font-size: 14px;
         opacity: .7;
     }
