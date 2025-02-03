@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-    import ThemeSwitcher from './ThemeSwitcher.vue';
+    import ThemeSwitcher from '../Base/ThemeSwitcher.vue';
 
     interface Props {
         title: string;
@@ -25,14 +25,14 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding: 20px 20px 20px 30px;
-        border-bottom: 2px solid var(--border-sidebar);
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-color);   
     }
 
     header .left h1 {
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: .5px;
     }
 
     header .right {

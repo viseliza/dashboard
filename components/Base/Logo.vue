@@ -18,24 +18,26 @@
     .logo-container {
         display: flex;
         flex-direction: row;
-        gap: 20px;
+        gap: 10px;
         align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
     }
-    .logo-container .img-container {
-        padding: 12px;
-        border-radius: 15px;
+    /* .logo-container .img-container {
+        padding: 8px;
+        border-radius: 8px;
         background: linear-gradient(90deg,#ad711156,#d18d2652,#f7a83a46);
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    }
+    } */
     .logo-container .img-container img {
         max-width: none;
         width: 24px;
         height: 24px;
     }
     h1 {
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 700;
-        letter-spacing: 1.2px;
+        letter-spacing: .5px;
         background: linear-gradient(90deg,#ad7111,#d18c26,#f7a73a); 
         background-clip: text;
         color: transparent;

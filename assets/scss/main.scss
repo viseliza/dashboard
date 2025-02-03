@@ -7,9 +7,11 @@ html.light-mode {
   --inversion-color: rgb(255, 255, 255);
   --background: #f3f3f7;
   // --background: linear-gradient(90deg, #efefef,#e9e8e9,#efefef);
-  --border-sidebar: rgb(235, 235, 235);
+  --border-color: #cacaca;
   --active-color: #4a7ef2;
   --sidebar-color: #f3f3f7;
+  --sidebar-bg-active: #f0f0f0;
+  --sidebar-text-active: #5b37ca;
 }
 
 html.dark-mode {
@@ -18,9 +20,11 @@ html.dark-mode {
   --inversion-color: #0c375a;
   // --background: linear-gradient(to right, #232526, #414345); 
   --background: #070A0B;           
-  --border-sidebar: rgba(255, 255, 255, .1);
+  --border-color: black;
   --active-color: #4a7ef2;
-  --sidebar-color: #f3f3f7;
+  --sidebar-color: #070A0B;
+  --sidebar-bg-active: #f0f0f0;
+  --sidebar-text-active: #5b37ca;
 }
 
 /* Убираем внутренние отступы */
@@ -49,7 +53,6 @@ dd {
 
 /* Выставляем основные настройки по-умолчанию для body */
 body {
-  min-height: 100vh;
   scroll-behavior: smooth;
   text-rendering: optimizeSpeed;
 }

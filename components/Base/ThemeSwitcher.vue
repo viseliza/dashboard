@@ -1,10 +1,6 @@
 <script setup>
-    const colorMode = useColorMode()
+    const colorMode = useColorMode();
     const isDark = shallowRef(0);
-
-    const toggleColorMode = () => {
-        colorMode.preference = colorMode.preference === 'light' ? 'dark' : 'light'
-    }
 
     watch(isDark, (newValue) => {
         colorMode.preference = newValue ? 'dark' : 'light';
@@ -33,9 +29,10 @@
 <style lang="scss" scoped>
 .toggle-btn {
     align-self: flex-start;
+    border: 1px solid var(--border-color);
     position: relative;
-    width: calc(145px / 2.3);
-    height: calc(74px / 2.3);
+    width: calc(145px / 2.8);
+    height: calc(75px / 2.8);
     border-radius: 40px;
 }
 
@@ -66,7 +63,6 @@ input[type="checkbox"] {
     overflow: hidden;
     opacity: 1;
     background-color: #fff;
-    box-shadow: 0px 2px 25px #d9d9d9;
     border-radius: 40px;
     transition: 0.2s ease background-color, 0.2s ease opacity;
 }
@@ -75,7 +71,9 @@ input[type="checkbox"] {
 }
 
 .toggle-btn span svg {
-    margin: 6px 7px;
+    margin: 0px 3.5px;
+    width: 16px;
+    height: 16px;
     z-index: 100;
 }
 .toggle-btn span .sun {
@@ -88,16 +86,16 @@ input[type="checkbox"] {
 .toggle-btn span:after {
     content: "";
     position: absolute;
-    top: calc(8px / 2.3);
-    width: calc(58px / 2.3);
-    height: calc(58px / 2.3);
+    top: calc(8px / 2.8);
+    width: calc(58px / 2.8);
+    height: calc(58px / 2.8);
     border-radius: 50%;
     transition: 0.5s ease transform, 0.2s ease background-color;
 }
 
 .toggle-btn span:after {
     background-color: #000;
-    transform: translate(2.4px, 0px);
+    transform: translate(1px, -1px);
     z-index: 0;
 }
 
@@ -111,6 +109,6 @@ input[type="checkbox"] {
 
 .toggle-btn input[type="checkbox"]:checked+span:after {
     background-color: #fff;
-    transform: translate(calc(78px / 2.3), 0px);
+    transform: translate(calc(74px / 2.8), -1px);
 }
 </style>
