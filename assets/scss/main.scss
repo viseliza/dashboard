@@ -3,28 +3,25 @@
 
 html.light-mode {
   --text-primary: rgb(0, 0, 0);
-  --text-secondary: rgb(110, 109, 122);
+  // --text-secondary: rgb(110, 109, 122);
+  --text-secondary: #bdbcbc;
   --inversion-color: rgb(255, 255, 255);
-  --background: #f3f3f7;
-  // --background: linear-gradient(90deg, #efefef,#e9e8e9,#efefef);
-  --border-color: #cacaca;
-  --active-color: #4a7ef2;
+  --background: #fff
+  --border-color: rgba(255, 255, 255, 0.5);
   --sidebar-color: #f3f3f7;
   --sidebar-bg-active: #f0f0f0;
-  --sidebar-text-active: #5b37ca;
+  --secondary-color: #e9e8e9;
 }
 
 html.dark-mode {
   --text-primary: rgb(250, 250, 250);
   --text-secondary: rgb(188, 187, 201);
   --inversion-color: #0c375a;
-  // --background: linear-gradient(to right, #232526, #414345); 
   --background: #070A0B;           
   --border-color: black;
-  --active-color: #4a7ef2;
   --sidebar-color: #070A0B;
   --sidebar-bg-active: #f0f0f0;
-  --sidebar-text-active: #5b37ca;
+  --secondary-color: #e9e8e9;
 }
 
 /* Убираем внутренние отступы */

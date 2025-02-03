@@ -6,7 +6,6 @@ import type { ErrorMessage } from '~/types/api/base';
 
 definePageMeta({
     layout: 'login',
-    middleware: ['auth'],
 })
 
 useHead({
@@ -27,7 +26,7 @@ const submit = (async () => {
     try {
         const tokens = await api.authorize(authLogin);
         tokens.updateTokens();
-        await navigateTo('/dashboard/')
+        return navigateTo('/dashboard/projects');
     } catch (e: any) {
         error.value = e as ErrorMessage;
     }
@@ -49,6 +48,10 @@ const submit = (async () => {
     <div class="left-side bg-gradient-base bg-repeat">
         <div class="header">
             <span>Пена пенится</span>
+        </div>
+
+        <div class="middle">
+            <img src="~/assets/images/logos/beer.svg" alt="">
         </div>
 
         <div class="footer">
@@ -94,8 +97,7 @@ const submit = (async () => {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    background: -webkit-linear-gradient(135deg, #ffda75, #ffcb3d, #ffbb00);
-    background: linear-gradient(135deg, #ffda75, #ffcb3d, #ffbb00);
+    background-image: linear-gradient(135deg, #ffda75, #ffcb3d, #ffbb00);
     box-shadow:
         rgba(0, 0, 0, 0.05) 0px 30px 60px -12px inset,
         rgba(0, 0, 0, 0.05) 0px 18px 36px -18px inset;
@@ -116,6 +118,16 @@ const submit = (async () => {
     width: 80px;
     height: 1px;
     background-color: #000;
+}
+.left-side .middle {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.left-side .middle img {
+    width: 250px;
+    height: 250px;
 }
 
 .left-side .footer {
