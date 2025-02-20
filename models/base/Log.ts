@@ -26,30 +26,241 @@ export class Log {
         this.created_at = params.created_at;
     }
 
-    static actions = {
-        items: ['AUTH_MIDDLEWARE', 'DUMP_LOGS', 'DUMP_SERVICES', 'DUMP_SETTINGS', 'DURAK_ACCOUNTS_UPDATED_MODE', 'GENERATE_SIGNATURE', 'LOGS_ERASED', 'PROXY_ADD', 'PROXY_ADDMANY', 'PROXY_DELETE', 'PROXY_DISABLE', 'PROXY_DUMP', 'PROXY_GET', 'PROXY_REFRESHED', 'PROXY_UPDATE', 'SYSTEM_CONFIGURED', 'UPDATE_SETTINGS', 'USER_AUTHORIZATION', 'USER_REFRESH_TOKEN'],
-        value: ''
-    } 
+    static actions = [
+        {
+            name: 'Авторизация middleware',
+            value: 'AUTH_MIDDLEWARE'
+        }, 
+        {
+            name: 'Дамп логов',
+            value: 'DUMP_LOGS'
+        }, 
+        {
+            name: 'Дамп сервисов',
+            value: 'DUMP_SERVICES'
+        }, 
+        {
+            name: 'Дамп настроек',
+            value: 'DUMP_SETTINGS'
+        }, 
+        {
+            name: 'Обновление режима аккаунтов',
+            value: 'DURAK_ACCOUNTS_UPDATED_MODE'
+        }, 
+        {
+            name: 'Генерация подписи',
+            value: 'GENERATE_SIGNATURE'
+        }, 
+        {
+            name: 'Очистка логов',
+            value: 'LOGS_ERASED'
+        }, 
+        {
+            name: 'Добавление прокси',
+            value: 'PROXY_ADD'
+        }, 
+        {
+            name: 'Добавление множества прокси',
+            value: 'PROXY_ADDMANY'
+        }, 
+        {
+            name: 'Удаление прокси',
+            value: 'PROXY_DELETE'
+        }, 
+        {
+            name: 'Отключение прокси',
+            value: 'PROXY_DISABLE'
+        }, 
+        {
+            name: 'Дамп прокси',
+            value: 'PROXY_DUMP'
+        }, 
+        {
+            name: 'Получение прокси',
+            value: 'PROXY_GET'
+        }, 
+        {
+            name: 'Обновление прокси',
+            value: 'PROXY_REFRESHED'
+        }, 
+        {
+            name: 'Обновление прокси',
+            value: 'PROXY_UPDATE'
+        }, 
+        {
+            name: 'Конфигурация системы',
+            value: 'SYSTEM_CONFIGURED'
+        }, 
+        {
+            name: 'Обновление настроек',
+            value: 'UPDATE_SETTINGS'
+        }, 
+        {
+            name: 'Авторизация пользователя',
+            value: 'USER_AUTHORIZATION'
+        }, 
+        {
+            name: 'Обновление токена пользователя',
+            value: 'USER_REFRESH_TOKEN'
+        }
+    ];
 
-    static actionsService = {
-        items: ['ACCOUNT_ADD', 'ACCOUNT_DELETE', 'ACCOUNT_DUMP', 'ACCOUNT_GET', 'ACCOUNT_REFRESH', 'ACCOUNT_UPDATE', 'ACCOUNT_WIPE', 'GET_SERVERS', 'GET_STATS', 'LOGS_SERVICE_DUMP', 'LOGS_STREAKS_DUMP', 'STREAK_ADD', 'STREAK_ADDMANY', 'STREAK_DELETE', 'STREAK_DUMP', 'STREAK_GET', 'STREAK_RELINK', 'STREAK_UPDATE', 'STREAK_WIPE'],
-        value: ''
-    }
+    static actionsService = [
+        {
+            name: 'Добавление аккаунта',
+            value: 'ACCOUNT_ADD'
+        }, 
+        {
+            name: 'Удаление аккаунта',
+            value: 'ACCOUNT_DELETE'
+        }, 
+        {
+            name: 'Дамп аккаунта',
+            value: 'ACCOUNT_DUMP'
+        }, 
+        {
+            name: 'Получение аккаунта',
+            value: 'ACCOUNT_GET'
+        }, 
+        {
+            name: 'Обновление аккаунта',
+            value: 'ACCOUNT_UPDATE'
+        }, 
+        {
+            name: 'Очистка аккаунта',
+            value: 'ACCOUNT_WIPE'
+        }, 
+        {
+            name: 'Получение серверов',
+            value: 'GET_SERVERS'
+        }, 
+        {
+            name: 'Получение статистики',
+            value: 'GET_STATS'
+        }, 
+        {
+            name: 'Дамп логов сервиса',
+            value: 'LOGS_SERVICE_DUMP'
+        }, 
+        {
+            name: 'Дамп логов штрихов',
+            value: 'LOGS_STREAKS_DUMP'
+        }, 
+        {
+            name: 'Добавление штриха',
+            value: 'STREAK_ADD'
+        }, 
+        {
+            name: 'Добавление множества штрихов',
+            value: 'STREAK_ADDMANY'
+        }, 
+        {
+            name: 'Удаление штриха',
+            value: 'STREAK_DELETE'
+        }, 
+        {
+            name: 'Дамп штриха',
+            value: 'STREAK_DUMP'
+        }, 
+        {
+            name: 'Получение штриха',
+            value: 'STREAK_GET'
+        }, 
+        {
+            name: 'Перелинковка штриха',
+            value: 'STREAK_RELINK'
+        }, 
+        {
+            name: 'Обновление штриха',
+            value: 'STREAK_UPDATE'
+        }, 
+        {
+            name: 'Очистка штриха',
+            value: 'STREAK_WIPE'
+        }
+    ];
 
-    static actionsStreak = {
-        items: ['BOT_AUTH', 'BOT_GAME_READY', 'BOT_SURRENDER', 'GAME_CREATE', 'GAME_END', 'GAME_INIT', 'GAME_PLAYER', 'GAME_START', 'GAME_STOP', 'GET_STATUS', 'ROUND_END', 'STREAK_RELINK'],
-        value: ''
-    }
+    static actionsStreak = [
+        {
+            name: 'Авторизация бота',
+            value: 'BOT_AUTH'
+        }, 
+        {
+            name: 'Готовность бота',
+            value: 'BOT_GAME_READY'
+        }, 
+        {
+            name: 'Отказ от игры',
+            value: 'BOT_SURRENDER'
+        }, 
+        {
+            name: 'Создание игры',
+            value: 'GAME_CREATE'
+        }, 
+        {
+            name: 'Завершение игры',
+            value: 'GAME_END'
+        }, 
+        {
+            name: 'Инициализация игры',
+            value: 'GAME_INIT'
+        }, 
+        {
+            name: 'Игрок в игре',
+            value: 'GAME_PLAYER'
+        },
+        {
+            name: 'Начало игры',
+            value: 'GAME_START'
+        }, 
+        {
+            name: 'Остановка игры',
+            value: 'GAME_STOP'
+        }, 
+        {
+            name: 'Статус игры',
+            value: 'GET_STATUS'
+        }, 
+        {
+            name: 'Завершение раунда',
+            value: 'ROUND_END'
+        }, 
+        {
+            name: 'Перелинковка',
+            value: 'STREAK_RELINK'
+        }
+    ];
 
-    static types = {
-        items: ['INFO', 'WARNING', 'ERROR', 'DEBUG'],
-        value: ''
-    } 
+    static types = [
+        {
+            name: 'Информация',
+            value: 'INFO'
+        }, 
+        {
+            name: 'Предупреждение',
+            value: 'WARNING'
+        }, 
+        {
+            name: 'Ошибка',
+            value: 'ERROR'
+        }, 
+        {
+            name: 'Отладка',
+            value: 'DEBUG'
+        }
+    ];
 
-    static orders = {
-        items: ['ASC', 'DESC'],    
-        value: ''
-    } 
+    static orders = [
+        {
+            name: 'По возрастанию',
+            value: 'ASC'
+        },
+        {
+            name: 'По убыванию',
+            value: 'DESC'
+        }
+    ];
+
 
     /** Получение конвертированной даты из timestamp
      * 

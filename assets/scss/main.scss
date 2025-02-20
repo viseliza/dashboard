@@ -3,14 +3,19 @@
 
 html.light-mode {
   --text-primary: rgb(0, 0, 0);
-  // --text-secondary: rgb(110, 109, 122);
   --text-secondary: #bdbcbc;
   --inversion-color: rgb(255, 255, 255);
-  --background: #fff
+  --background: #fff;
   --border-color: rgba(255, 255, 255, 0.5);
-  --sidebar-color: #f3f3f7;
-  --sidebar-bg-active: #f0f0f0;
+  --secondary-sub-color: #f3f3f3;
   --secondary-color: #e9e8e9;
+  --toggle-light: #d8dbe0;
+  --toggle-dark: #28292c;
+  --alpha-yellow: #ffff6659;
+  --active-color: #0766ff;
+  --active-color-alpha: #0766ff21;
+  --bg-code: #1e2532;
+  --delete-color: rgba(255, 0, 0, 0.5);
 }
 
 html.dark-mode {
@@ -19,9 +24,15 @@ html.dark-mode {
   --inversion-color: #0c375a;
   --background: #070A0B;           
   --border-color: black;
-  --sidebar-color: #070A0B;
-  --sidebar-bg-active: #f0f0f0;
+  --secondary-sub-color: #f3f3f3;
   --secondary-color: #e9e8e9;
+  --toggle-light: #d8dbe0;
+  --toggle-dark: #28292c;
+  --alpha-yellow: #ffff6659;
+  --active-color: #0766ff;
+  --active-color-alpha: #0766ff42;
+  --bg-code: #1e2532;
+  --delete-color: rgba(255, 0, 0, 0.5);
 }
 
 /* Убираем внутренние отступы */

@@ -3,7 +3,7 @@ import { Tokens } from "~/models"
 export default defineNuxtRouteMiddleware((to, from) => {
     const tokens = Tokens.getTokens();
     
-    if (to.path === '/login' && 
+    if (to.path === '/dashboard/login' && 
         tokens.access_token && 
         tokens.refresh_token
     ) {
@@ -12,12 +12,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
     }
 
     if (
-        to.path !== '/login' && 
+        to.path !== '/dashboard/login' && 
         !tokens.access_token && 
         !tokens.refresh_token
     ) {
         console.log("redirect - To Login");
-        return navigateTo('/login');
+        return navigateTo('/dashboard/login');
     }
     
     if (

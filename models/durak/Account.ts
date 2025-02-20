@@ -82,7 +82,6 @@ export class AccountUpdate implements IAccountUpdate {
      * @param {IAccountUpdate} opts 
      */
     constructor(opts: IAccountUpdate) {
-        console.log(opts)
         this.id = opts.id;
         
         if (!['main', 'farm', 'reserve_main'].includes(opts.mode))

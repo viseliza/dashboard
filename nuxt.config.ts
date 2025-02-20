@@ -1,42 +1,27 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-import type { NuxtPage } from 'nuxt/schema'
+// @ts-ignore
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
+// @ts-ignore
 export default defineNuxtConfig({
     build: {
         transpile: ['vuetify'],
     },
 
-    // hooks: {
-    //     'pages:extend'(pages) {
-    //         function setMiddleware(pages: NuxtPage[]) {
-    //             for (const page of pages) {
-    //                 console.log('1', page.path)
-    //                 if (page.path === '/login') {
-    //                     page.meta ||= {}
-    //                     page.meta.middleware = ['auth']
-    //                 }
-    //                 if (page.children) {
-    //                     setMiddleware(page.children)
-    //                 }
-    //             }
-    //         }
-    //         setMiddleware(pages)
-    //     }
-    // },
-
     modules: [
-        (_options, nuxt) => {
-            nuxt.hooks.hook('vite:extendConfig', (config) => {
-                // @ts-expect-error
+        (_options: any, nuxt: any) => {
+            nuxt.hooks.hook('vite:extendConfig', (config: any) => {
+                // @ts-ignore
                 config.plugins.push(vuetify({ autoImport: true }))
             })
         },
         '@nuxtjs/color-mode',
-        // '@nuxtjs/style-resources',
+        '@pinia/nuxt',
     ],
 
     vite: {
+        optimizeDeps: {
+          include: ["plotly.js-dist-min"],
+        },
         vue: {
             template: {
                 transformAssetUrls,
@@ -47,22 +32,21 @@ export default defineNuxtConfig({
                 port: 20200
             }
         },
-        // css: {
-        //     preprocessorOptions: {
-        //         scss: {
-        //             additionalData: '@use "@/assets/scss/_variables.scss" as *;'
-        //         }
-        //     }
-        // }
+    },
+
+    routeRules: {
+        '/*': { cors: true }
     },
 
     css: [
         '~/assets/fonts/openSans.css',
         '~/assets/fonts/poppins.css',
+        '~/assets/fonts/RobotoMono.css',
         '~/assets/css/style.css',
         '~/assets/css/main.css',
         '~/assets/scss/_variables.scss',
         '~/assets/scss/main.scss',
+        '@fortawesome/fontawesome-svg-core/styles.css'
     ],
 
     compatibilityDate: '2024-10-09',

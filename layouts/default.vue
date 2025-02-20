@@ -1,15 +1,19 @@
 <script setup lang="ts">
 	import Sidebar from '~/components/Dashboard/Sidebar.vue';
 	const route = useRoute();
+
+	const isDashboard = computed(() => route.path.split('/').indexOf('dashboard') !== -1);
 </script>
 
 <template>
-	<div :class="route.path.split('/').indexOf('dashboard') !== -1 ? 'app' : ''">
-		<Sidebar v-if="route.path.split('/').indexOf('dashboard') !== -1"/>
+	<div :class="isDashboard ? 'app' : ''">
+		<Sidebar v-if="isDashboard"/>
 
 		<slot>
 	
 		</slot>
+
+		<div id="layout"></div>
 	</div>
 </template>
 
@@ -19,6 +23,6 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
-		padding-left: 260px;
+		padding: 0 0 0 240px;
 	}
 </style>

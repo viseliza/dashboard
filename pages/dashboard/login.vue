@@ -221,7 +221,6 @@ const submit = (async () => {
         flex: 1 1 auto;
     }
 
-
     .tab {
         width: 220px;
         height: 80px;
@@ -286,4 +285,4 @@ const submit = (async () => {
         justify-content: center;
     }
 }
-</style>~/api/services/PennoeAPI
+</style>

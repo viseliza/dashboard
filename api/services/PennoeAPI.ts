@@ -23,7 +23,7 @@ export class PennoeAPI extends TemplateAPI {
     * @param {AuthLogin} authLogin - Данные для авторизации
     * @returns {Promise<Tokens>} - Токены от аккаунта 
     */
-    async authorize(authLogin: AuthLogin) {
+    async authorize(authLogin: AuthLogin): Promise<Tokens> {
         const response = await super.callApi('auth/login', {
             body: {
                 username: authLogin.username,

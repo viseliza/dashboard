@@ -46,26 +46,4 @@
     .input-box-content {
         border-radius: 10px;
     }
-
-    .v-text-field {
-        ::v-deep .v-field, ::v-deep .v-label {
-            font-size: 14px;
-        }
-        
-        ::v-deep .v-label.v-field-label--floating {
-            font-size: 10px;
-        }
-
-        ::v-deep .v-field__outline {
-            display: none;
-        }
-
-        ::v-deep .v-field__overlay {
-            border-radius: 5px;
-        }
-        
-        ::v-deep .v-input {
-            background-color: #000;
-        }
-    }
 </style>

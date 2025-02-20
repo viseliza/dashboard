@@ -5,7 +5,7 @@
         title: string;
     }
 
-    const props = defineProps<Props>();
+    defineProps<Props>();
 </script>
 
 <template>
@@ -25,12 +25,12 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding: 15px 20px;
-        border-bottom: 1px solid var(--border-color);   
+        padding: 20px;
+        border-bottom: 2px solid var(--secondary-color);   
     }
 
     header .left h1 {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 700;
         letter-spacing: .5px;
     }

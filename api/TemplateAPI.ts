@@ -70,19 +70,14 @@ export class TemplateAPI {
      */
     async privateCall(callback: any, params: any = {}, tokens: TokensParams) {
         try {
-            return {
-                tokens,
-                callbackResult: await callback(params, tokens.access_token)
-            };
+            return await callback(params, tokens.access_token);
         } catch (error: any) {
             if (error.code == 401 || error.code == 403 || error.status == 302) {
                 const newTokens = await this.refreshAccessToken(tokens);
                 const callbackResult = await callback(params, tokens.access_token);
-                
-                return {
-                    tokens: newTokens,
-                    callbackResult
-                }
+                newTokens.updateTokens();
+
+                return callbackResult;
             }
             console.log(error);
             throw new Error('Заглушка'); // TODO

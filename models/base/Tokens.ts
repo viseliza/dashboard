@@ -7,8 +7,8 @@ import type { TokensParams, ITokens } from '@/types/api';
  * @implements {ITokens}
  */
 export class Tokens implements ITokens {
-    private access_token: string;
-    private refresh_token: string;
+    public access_token: string;
+    public refresh_token: string;
 
     /**
      * Конструктор класса

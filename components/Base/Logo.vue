@@ -8,7 +8,7 @@
 <template>
     <section class="logo-container">
         <div class="img-container">
-            <img src="~/assets/images/logos/favicon.svg" alt="Пена">
+            <img src="~/assets/images/logos/pena.svg" alt="Пена">
         </div>
 
         <h1 v-if="showTitle">Пенное</h1>
@@ -21,7 +21,7 @@
         flex-direction: row;
         gap: 10px;
         align-items: center;
-        padding: 30px 20px;
+        padding: 30px;
     }
     .logo-container .img-container img {
         max-width: none;

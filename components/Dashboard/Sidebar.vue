@@ -25,11 +25,11 @@
             <Logo :show-title="true" />
 
             <ul>
-                <a
+                <NuxtLink
                     class="nav-item"
                     v-for="item in content"
                     :key="item.rus"
-                    :href="item.eng"
+                    :to="'/dashboard/' + item.eng"
                     :class="{ 'active': route.path.split('/')[2].indexOf(item.eng) !== -1 }"
                 >   
                     <div class="left">
@@ -44,7 +44,7 @@
                             mdi-plus
                         </v-icon>
                     </button>
-                </a>
+                </NuxtLink>
             </ul>
         </div>
         
@@ -79,11 +79,11 @@
         bottom: 0;
         z-index: 1;
         height: 100vh;
-        width: 205px;
+        width: 240px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        border-right: 1px solid var(--secondary-color);
+        border-right: 2px solid var(--secondary-color);
     }
     .sidebar-container .top-side-container {
         display: flex;
@@ -91,13 +91,12 @@
         gap: 20px;
     }
     .sidebar-container ul {
-        padding: 15px;
+        padding: 20px 30px;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 30px;
     }
     .sidebar-container .nav-item {
-        padding: 5px 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;    
@@ -165,6 +164,6 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
-        padding: 15px;
+        padding: 30px;
     }
 </style>

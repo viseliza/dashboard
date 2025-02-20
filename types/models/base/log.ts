@@ -11,16 +11,6 @@ export type LogDump = {
     count: number;
 }
 
-export type LogDumpParams = {
-    id?: string;
-    action?: LogActionSystem | LogActionService | LogActionStreak;
-    log_type?: LogType;
-    from_timestamp?: number;
-    to_timestamp?: number;
-    order?: LogOrder;
-    limit: number;
-    offset: number;
-}
 
 export type LogSystem = {
     action: LogActionSystem;
