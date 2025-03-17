@@ -1,10 +1,9 @@
 <script setup lang="ts">
-    defineProps<{
+    const props = defineProps<{
         _key: string;
         value: string | number;
-        queryParams: QueryParams;
     }>();
-
+    
     const isHover = shallowRef(false);
 
     const translateKey: any = {
@@ -16,22 +15,36 @@
         'asc': 'По возрастанию',
         'desc': 'По убыванию',
     }
-</script>
 
+    const displayValue = computed(() => {
+        return typeof props.value === 'string' && translateKey[props.value.toLowerCase()] 
+            ? translateKey[props.value.toLowerCase()] 
+            : props.value;
+    });
+
+    const removeFilter = () => {
+        const route = useRoute();
+        const router = useRouter();
+
+        const newQuery = { ...route.query }
+        delete newQuery[props._key]
+
+        router.push({ 
+            path: route.path, 
+            query: newQuery 
+        });
+    }
+</script>
 
 <template>
     <button 
-        @click="queryParams.updateQueries({ [_key]: undefined })" 
+        @click="QueryParams.removeQuery(props._key)" 
         class="active-filter"
         @mouseover="isHover = true"
         @mouseleave="isHover = false"
     >
         <span>
-            {{ 
-                typeof value === 'string' && translateKey[value.toLowerCase()] 
-                    ? translateKey[value.toLowerCase()] 
-                    : value 
-            }}
+            {{ displayValue }}
         </span>
 
         <transition mode="default" name="fade">

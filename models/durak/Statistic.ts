@@ -7,8 +7,8 @@ import type { StatisticData } from "~/types";
  * @param {any}    param.streaks
  */
 export class Statistic {
-    account;
-    balances;
+    accounts;
+    balance;
     streaks;
 
     /** Конструктор
@@ -16,8 +16,8 @@ export class Statistic {
      * @param {any} opts 
      */
     constructor(opts: StatisticData) {
-        this.account     = opts.account;
-        this.balances   = opts.balances;
+        this.accounts = opts.accounts;
+        this.balance  = opts.balance;
         this.streaks  = opts.streaks;
     }
 

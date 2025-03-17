@@ -1,62 +1,112 @@
 <script setup lang="ts">
     import projects from '~/assets/images/navbar/projects.svg';
     import proxies from '~/assets/images/navbar/proxies.svg';
-    import utils from '~/assets/images/navbar/utils.svg';
     import logs from '~/assets/images/navbar/logs.svg';
-    import Logo from '../Base/Logo.vue';
+    import { ProxyHelper } from '~/utils';
+    import { ProxyAPI } from '~/api';
 
+    const showSettings = defineModel<boolean>('showSettings', {
+        type: Boolean,
+        required: true,
+    });
     
     const content = [
         { rus: 'Проекты', eng: 'projects', path: projects, add: false },
         { rus: 'Прокси', eng: 'proxies', path: proxies, add: true },
         { rus: 'Логи', eng: 'logs', path: logs, add: false },
-        { rus: 'Утилиты', eng: 'utils', path: utils, add: false },
+        { rus: 'Утилиты', eng: 'utils', path: false, add: false, icon: 'fa-signature' },
     ];
     
+    const createItem = reactive({
+        show: false,
+        name: '',
+        data: {},
+    });
+    const proxyHelper = new ProxyHelper();
 
     const route = useRoute();
-    const searchValue = ref<string>('');
 </script>
 
 
 <template>
     <aside class="sidebar-container">
         <div class="top-side-container">
-            <Logo :show-title="true" />
+            <BaseLogo :show-title="true" />
 
             <ul>
-                <NuxtLink
+                <div
                     class="nav-item"
                     v-for="item in content"
                     :key="item.rus"
-                    :to="'/dashboard/' + item.eng"
                     :class="{ 'active': route.path.split('/')[2].indexOf(item.eng) !== -1 }"
                 >   
-                    <div class="left">
+                    <NuxtLink 
+                        :to="'/dashboard/' + item.eng" 
+                        class="left"
+                    >
                         <div class="img-container">
-                            <img :src="item.path" alt="">
+                            <font-awesome-icon v-if="!item.path && item.icon" :icon="item.icon" />
+                            <img v-else :src="(item.path as string)" alt="">
                         </div>
                         <span>{{ item.rus }}</span>
-                    </div>
+                    </NuxtLink>
 
-                    <button v-if="item.add" class="right">
+                    <button 
+                        v-if="item.add" 
+                        class="right"
+                        @click="() => {
+                            createItem.show = true;
+                            createItem.name = item.rus;
+                        }"
+                    >
                         <v-icon>
                             mdi-plus
                         </v-icon>
                     </button>
-                </NuxtLink>
+                </div>
             </ul>
         </div>
+
+        <Teleport to="#modal">
+            <ModalsControlModal
+                v-if="createItem.show"
+                v-model:showModal="createItem.show"
+                title="Создание прокси"
+            >
+                <template #content>
+                    <ModalsControlForm
+                        v-model:show-modal="createItem.show"
+                        v-model:data="createItem.data"
+                        :with-categories="true"
+                        :api="new ProxyAPI('')"
+                        :call="new ProxyAPI('').create"
+                        :params="proxyHelper.proxyParams"
+                        :get-params="proxyHelper.getProxyParams"
+                        :helper="proxyHelper"
+                        :styles="{
+                            'padding': '0',
+                            'padding-top': '15px',
+                            'gap': '0',
+                            'max-height': '580px',
+                            'overflow-y': 'auto',
+                        }"
+                    />
+                </template>
+            </ModalsControlModal>
+        </Teleport>
         
         <footer class="footer">
-            <div class="nav-item">
+            <button
+                class="nav-item"
+                @click="showSettings = true"
+            >
                 <div class="left">
                     <div class="img-container">
                         <img src="~/assets/images/navbar/settings.svg" alt="">
                     </div>
                     <span>Настройки</span>
                 </div>
-            </div>
+            </button>
 
             <div class="nav-item">
                 <div class="left">
@@ -126,8 +176,11 @@
         align-items: center;
     }
     .sidebar-container .nav-item .left:hover > .img-container img,
+    .sidebar-container .nav-item .left:hover > .img-container svg,
     .sidebar-container .nav-item .left:hover > .img-container .v-icon,
-    .sidebar-container .nav-item.active > .left .img-container img {
+    .sidebar-container .nav-item.active > .left .img-container img,
+    .sidebar-container .nav-item.active > .left .img-container svg,
+    .sidebar-container .nav-item.active > .left .img-container .v-icon {
         filter: invert(0%) sepia(100%) saturate(0%) hue-rotate(21deg) brightness(97%) contrast(103%);
     }
     .sidebar-container .nav-item .left span {
@@ -137,6 +190,7 @@
         transition: 0.5s;
     }
     .sidebar-container .nav-item .left img,
+    .sidebar-container .nav-item .left svg,
     .sidebar-container .nav-item .left .v-icon {
         font-size: 20px;
         max-width: none;

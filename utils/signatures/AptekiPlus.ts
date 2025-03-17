@@ -1,4 +1,5 @@
 import type { SignatureStrategy } from "~/types";
+import type { SignatureAPI } from "~/api";
 import aptekiPlus from '~/assets/images/logos/aptekiplus.svg';
 
 export class AptekiPlus implements SignatureStrategy {
@@ -6,6 +7,9 @@ export class AptekiPlus implements SignatureStrategy {
         return 'Аптеки Плюс';
     }
 
+    getAPICall(api: SignatureAPI) {
+        return api.aptekiPlus;
+    }
 
     getParams(args = null): Record<string, any> {
         return {

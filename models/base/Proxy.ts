@@ -47,65 +47,66 @@ export class Proxy {
     static baseParams = {
         host: {
             type: 'string',
-            example: '1.1.1.1'
-
+            example: '1.1.1.1',
+            required: true,
         },
         port: {
             type: 'number',
-            example: 8080
-
+            example: 8080,
+            required: true,
         },
         type: {
             type:  ['http', 'https', 'socks4', 'socks5'],
-            example: 'socks5'
-
+            example: 'socks5',
+            required: true,
         },
         mode: {
             type:  ['streaks', 'refresher', 'concurrent_requests'],
-            example: 'streaks'
-
+            example: 'streaks',
+            required: true,
         },
         checkInternet: {
             type: [true, false],
-            example: true
-
+            example: true,
+            required: true,
         },
         enable: {
             type: [true, false],
-            example: true
-
+            example: true,
+            required: true,
         },
         auth: {
             enable: {
                 type: [true, false],
-                example: true
-
+                example: true,
+                required: true,
             },
             username: {
                 type: 'string',
-                example: 'login'
-
+                example: 'login',
+                required: false,
             },
             password: {
                 type: 'string',
-                example: 'password'
+                example: 'password',
+                required: false,
             },
         },
         update: {
             enable: {
                 type: [true, false],
-                example: true
-
+                example: true,
+                required: true,
             },
             link: {
                 type: 'string',
-                example: 'https://update.link/here'
-
+                example: 'https://update.link/here',
+                required: false,
             },
             seconds: {
                 type: 'number',
-                example: 120
-
+                example: 120,
+                required: false,
             }
         }
     };

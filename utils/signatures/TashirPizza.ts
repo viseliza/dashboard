@@ -1,8 +1,14 @@
 import type { SignatureStrategy } from "~/types";
 import tashirpizza from '~/assets/images/logos/tashirpizza.svg';
+import type { SignatureAPI } from "~/api";
+
 export class TashirPizza implements SignatureStrategy {
     getTitle() {
         return 'Ташир Пицца';
+    }
+
+    getAPICall(api: SignatureAPI) {
+        return api.tashirPizza;
     }
 
     getParams(args = null): Record<string, any> {

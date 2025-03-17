@@ -1,49 +1,64 @@
 <script setup lang="ts">
-import Input from '~/components/Input.vue';
-import { AuthLogin } from '~/models';
-import { TemplateAPI, PennoeAPI } from '~/api';
-import type { ErrorMessage } from '~/types/api/base';
+    import Input from '~/components/Input.vue';
+    import { AuthLogin, Tokens } from '~/models';
+    import { TemplateAPI, PennoeAPI } from '~/api';
+    import type { ErrorMessage } from '~/types/api/base';
 
-definePageMeta({
-    layout: 'login',
-})
+    definePageMeta({
+        layout: 'login',
+    })
 
-useHead({
-    title: 'Панель - Вход'
-});
-
-const loginValue = ref<string>('');
-const passwordValue = ref<string>('');
-const error = ref<ErrorMessage>();
-
-const submit = (async () => {
-    const api = new PennoeAPI(TemplateAPI.x_token);
-    const authLogin = new AuthLogin({
-        username: loginValue.value,
-        password: passwordValue.value,
+    useHead({
+        title: 'Панель - Вход'
     });
 
+    const api = new PennoeAPI(TemplateAPI.x_token);
     try {
-        const tokens = await api.authorize(authLogin);
-        tokens.updateTokens();
-        return navigateTo('/dashboard/projects');
-    } catch (e: any) {
-        error.value = e as ErrorMessage;
-    }
-})
+        const res = await api.refreshAccessToken(Tokens.getTokens());
+        
+        if (res)
+            navigateTo('/dashboard/projects');
+    } catch (e) { }
+
+    const loginValue = ref<string>('');
+    const passwordValue = ref<string>('');
+    const error = reactive<ErrorMessage>({
+        code: 0,
+        detail: '',
+        message: '',
+    });
+
+    const submit = (async () => {
+        const authLogin = new AuthLogin({
+            username: loginValue.value,
+            password: passwordValue.value,
+        });
+
+        try {
+            const tokens = await api.authorize(authLogin);
+            tokens.updateTokens();
+            return navigateTo('/dashboard/projects');
+        } catch (e: any) {
+            console.log(JSON.parse(JSON.stringify(e)));
+            error.code = e.code;
+            error.detail = e.detail;
+            error.message = e.message;
+        }
+    })
 </script>
 
 
 <template>
-    <Teleport to='body'>
-        <Notification 
-            v-if="error" 
-            :detail="error.detail"
-            :message="error.message"
-            :code="error.code" 
-            @close-notification="error = undefined"
-        />
-    </Teleport>
+    <transition mode="default" name="fade"> 
+        <Teleport v-if="error.code !== 0" to='#notification'>
+            <BaseNotification 
+                :detail="error.detail"
+                :message="error.message"
+                :code="error.code" 
+                @close="() => { error.code = 0; error.detail = ''; error.message = ''; }"
+            />
+        </Teleport>
+    </transition>
 
     <div class="left-side bg-gradient-base bg-repeat">
         <div class="header">
@@ -194,6 +209,14 @@ const submit = (async () => {
     /* изменяем размер контейнера */
 }
 
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 
 
 .right-side {

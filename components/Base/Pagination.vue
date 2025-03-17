@@ -1,18 +1,20 @@
+
 <script lang="ts" setup>
     import type { PaginationParams } from '~/types';
-    import { Pagination, calculatePages } from '~/utils';
+    import { Pagination, QueryParams, calculatePages } from '~/utils';
     
     const props = defineProps<{
-        route: any;
-        router: any;
-        queryParams: QueryParams;
+        totalPages: number;
     }>();
-    const currentPage = shallowRef(props.route.query.page 
-        ? isNaN(props.route.query.page as any) ? 1 : Number.parseInt(props.route.query.page as string)
+    
+    const route = useRoute();
+    const router = useRouter();
+    
+    const currentPage = shallowRef(route.query.page 
+        ? isNaN(route.query.page as any) ? 1 : Number.parseInt(route.query.page as string)
         : 1);
 
-    const totalPages = defineModel<number>();
-    const paginations = shallowRef(calculatePages(currentPage.value, totalPages.value ?? 0));
+    const paginations = shallowRef(calculatePages(currentPage.value, props.totalPages ?? 0));
 
     const pagination = new Pagination();
     pagination.use('digit', new DigitStrategy());
@@ -22,19 +24,18 @@
     function handleClick(opts: PaginationParams) {
         const res = pagination.getPage(opts._class.split(' ')[0], opts);
 
-        props.queryParams.updateQueries({ 
+        QueryParams.updateQueries({ 
             page: res 
         });
     }
 
-    watch(totalPages, (newValue) => {
+    watch(() => props.totalPages, (newValue) => {
         paginations.value = calculatePages(currentPage.value, newValue || 0);
     });
 
-    watch(() => props.route.query.page, (newValue) => {
-        console.log(newValue);
+    watch(() => route.query.page, (newValue) => {
         currentPage.value = isNaN(newValue as any) ? 1 : Number.parseInt(newValue as string);
-        paginations.value = calculatePages(currentPage.value, totalPages.value || 0);
+        paginations.value = calculatePages(currentPage.value, props.totalPages || 0);
     });
 </script>
 

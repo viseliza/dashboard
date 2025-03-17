@@ -1,8 +1,13 @@
-import type { SignatureStrategy } from "~/types";
+import type { SignatureAPI } from "~/api";
+import type { SignatureStrategy, SignatureStyle } from "~/types";
 
 export class ConcurentRequest implements SignatureStrategy {
     getTitle() {
         return 'Конкурентные запросы';
+    }
+
+    getAPICall(api: SignatureAPI) {
+        return api.concurentRequest; // TODO: Добавить метод
     }
 
     getParams(args = null): Record<string, any> {
@@ -39,7 +44,7 @@ export class ConcurentRequest implements SignatureStrategy {
         return 'Сигнатура для работы с конкурентными запросами';
     }
 
-    getStyle() {
+    getStyle(): SignatureStyle {
         return {
             icon: null,
             color: null

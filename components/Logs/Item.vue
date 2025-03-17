@@ -1,11 +1,11 @@
 <script lang="ts" setup>
     import type { Log } from '~/models';
+
     type Props = {
         log: Log;
     }
     const props = defineProps<Props>();
     const showMeta = shallowRef(false);
-    const preTag = shallowRef();
 
     const logType = {
         info: {
@@ -25,35 +25,11 @@
             color: '#75b9a5'
         }
     }
-
     
     const getDate = computed(() => {
-        const date = new Date(props.log.created_at * 1000);
+        if (props.log.created_at === 0) return "—";
+        const date = new Date(props.log.created_at * 1_000);
         return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-    });
-
-
-    function syntaxHighlight(json: any) {
-        json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match: any) {
-            var cls = 'number';
-            if (/^"/.test(match)) {
-                if (/:$/.test(match)) {
-                    cls = 'key';
-                } else {
-                    cls = 'string';
-                }
-            } else if (/true|false/.test(match)) {
-                cls = 'boolean';
-            } else if (/null/.test(match)) {
-                cls = 'null';
-            }
-            return '<span class="' + cls + '">' + match + '</span>';
-        });
-    }
-
-    onMounted(() => {
-        preTag.value.innerHTML = syntaxHighlight(JSON.stringify(props.log.meta, null, 4)); 
     });
 </script>
 
@@ -90,28 +66,11 @@
             </span>
         </div>
 
-        <div v-show="showMeta" class="meta-details">
-            <pre ref="preTag"></pre>
-        </div>
+        <BaseCode v-show="showMeta" v-model:data="log.meta" size="14px" />
     </div>
 </template>
 
-
-<style>
-    .string,
-    .number,
-    .boolean,
-    .null,
-    .key {
-        font-family: "Roboto Mono", serif;
-    }
-
-    .boolean,
-    .null { color: #508ec1; }
-    .string { color: #c08973; }
-    .number { color: #a9c19f; }
-    .key { color: #a4dffe; }
-    
+<style scoped lang="scss">
     .log-container {
         display: flex;
         flex-direction: column;
@@ -143,27 +102,17 @@
         font-family: "Roboto Mono", serif;
     }
     .log-container .log-header .action {
-        background-color: var(--secondary-color);
-        border: 2px solid var(--text-secondary);
+        background-color: var(--secondary-sub-color);
+        border: 1px solid var(--text-secondary);
         font-size: 10px;
+        color: var(--text-secondary);
+        font-weight: 700;
         border-radius: 5px;
         padding: 3px 8px;
-        opacity: .5;
     }
     .log-container .log-header .message {
         font-family: "Roboto Mono", serif;
         letter-spacing: .5px;
-    }
-    
-    .log-container .meta-details {
-        display: flex;
-        position: relative;
-        border-radius: 10px;
-        padding: 20px;
-        color: #fff;
-        background-color: #1e1e1e;
-        font-family: "Roboto Mono", serif;
-        overflow-x: auto;
     }
 
 </style>

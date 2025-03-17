@@ -1,3 +1,4 @@
+import type { SignatureAPI } from "~/api";
 import type { SignatureStrategy } from "~/types";
 
 /** Класс для работы с сигнатурами */
@@ -24,8 +25,20 @@ export class Signatures {
         if (!this.strategies[name]) {
             throw new Error('Такой стратегии не существует');
         }
-
         return this.strategies[name].getTitle();
+    }
+
+    /** Получение метода API для сигнатуры
+     * 
+     * @param name - название сигнатуры
+     * @param api - экземпляр API
+     * @returns - метод API
+     */
+    getAPICall(name: string, api: SignatureAPI) {
+        if (!this.strategies[name]) {
+            throw new Error('Такой стратегии не существует');
+        }
+        return this.strategies[name].getAPICall(api);
     }
 
     /** Получение параметров создания сигнатуры
@@ -38,7 +51,6 @@ export class Signatures {
         if (!this.strategies[name]) {
             throw new Error('Такой стратегии не существует');
         }
-
         return this.strategies[name].getParams.apply(null, [args]);
     }
 
@@ -51,7 +63,6 @@ export class Signatures {
         if (!this.strategies[name]) {
             throw new Error('Такой стратегии не существует');
         }
-
         return this.strategies[name].getDescription();
     }
 
@@ -60,11 +71,10 @@ export class Signatures {
      * @param name - название сигнатуры
      * @returns - стили сигнатуры
      */
-    getStyle(name: string) {
+    getStyle(name: string): any {
         if (!this.strategies[name]) {
             throw new Error('Такой стратегии не существует');
         }
-
         return this.strategies[name].getStyle();
     }
 }

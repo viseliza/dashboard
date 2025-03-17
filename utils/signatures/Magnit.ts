@@ -1,9 +1,14 @@
 import type { SignatureStrategy } from "~/types";
+import type { SignatureAPI } from "~/api";
 import magnit from '~/assets/images/logos/magnit.svg';
 
 export class Magnit implements SignatureStrategy {
     getTitle() {
         return 'Магнит';
+    }
+
+    getAPICall(api: SignatureAPI) {
+        return api.magnit;
     }
 
     getParams(args = null): Record<string, any> {
@@ -35,7 +40,7 @@ export class Magnit implements SignatureStrategy {
             },
             'body': {
                 example: '',
-                type: 'string',
+                type: 'object',
                 required: false,
             },
             'access_token': {

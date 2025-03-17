@@ -1,6 +1,6 @@
 export interface StatisticData {
-    account: StatAccountData;
-    balances: StatBalanceData
+    accounts: StatAccountData;
+    balance: StatBalanceData;
     streaks: StatStreaksData;
 }
 

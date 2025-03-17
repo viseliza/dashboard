@@ -1,7 +1,6 @@
 <script lang="ts" setup>
     import ProjectsMiniCard from '~/components/Projects/MiniCard.vue';
     import ControlBar from '~/components/Dashboard/ControlBar.vue';
-    import Header from '~/components/Dashboard/Header.vue';
     import Card from '~/components/Projects/Card.vue';
     import { PennoeAPI, TemplateAPI } from '~/api';
     import { ServiceItem, Tokens } from '~/models';
@@ -29,7 +28,10 @@
 
 
 <template>
-    <Header title="Проекты"/>
+    <DashboardHeader 
+        title="Проекты"
+        :paths="['Панель', 'Проекты']"
+    />
 
     <main>
         <div class="cards-container">
@@ -59,6 +61,7 @@
         display: flex;
 		flex-direction: column;
         padding: 20px;
+        padding-top: 10px;
         margin-right: 400px;
 	}
     .cards-container {

@@ -8,7 +8,7 @@
 <template>
     <section class="logo-container">
         <div class="img-container">
-            <img src="~/assets/images/logos/pena.svg" alt="Пена">
+            <img src="~/assets/images/logos/pennoe-logo.svg" alt="Пена">
         </div>
 
         <h1 v-if="showTitle">Пенное</h1>

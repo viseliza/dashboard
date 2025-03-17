@@ -28,7 +28,7 @@ export class SettingsAPI extends TemplateAPI implements ISettingAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<any>} - Модели настроек и общее их количество
     */
-    async get(params: any, access_token: string) {
+    async get(params: any, access_token: string): Promise<any> {
         return await super.callApi(SettingsAPI.METHOD, {
             headers: {
                 'Authorization': `Bearer ${access_token}`

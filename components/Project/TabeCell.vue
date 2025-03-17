@@ -6,7 +6,9 @@
     defineProps<Props>();
 
     const timestampToDate = (timestamp: number) => 
-        new Date(timestamp * 1000).toLocaleDateString();
+        timestamp === 0 
+            ? "—" 
+            : new Date(timestamp * 1_000).toLocaleDateString();
 
     const emit = defineEmits(['click']);
     const handleClick = (event: any) => emit('click', event);

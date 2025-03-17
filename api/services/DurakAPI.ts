@@ -58,7 +58,7 @@ export class DurakAPI extends TemplateAPI {
             },
             body
         }, "POST");
-        return streaks.data.map(streak => new Streak({
+        return streaks.data.map((streak: any) => new Streak({
             id: streak,
             points: streaks.points
         }));
@@ -71,7 +71,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<Streak[]>} - Модели штрихов и их количество
     */
-    async dumpStreaks(params, access_token: string) {
+    async dumpStreaks(params: any, access_token: string) {
         const { data, count } = await super.callApi(DurakAPI.streaksMethod + 'dump', {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -81,7 +81,7 @@ export class DurakAPI extends TemplateAPI {
             }
         });
         return {
-            data: data.map(streak => new Streak(streak)),
+            data: data.map((streak: any) => new Streak(streak)),
             count
         }
     }
@@ -93,7 +93,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<Streak>} - Обновленная модель штриха
     */
-    async updateStreak(data, access_token: string) {
+    async updateStreak(data: any, access_token: string) {
         const { id, points } = data;
         const streak = await super.callApi(DurakAPI.streaksMethod + id, {
             headers: {
@@ -111,7 +111,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<Streak>} - Обновленная модель штриха
     */
-    async deleteStreak(id, access_token: string) {
+    async deleteStreak(id: string, access_token: string) {
         const streak = await super.callApi(DurakAPI.streaksMethod + id, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -127,13 +127,29 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<any>} - Статус завершения операции
     */
-    async wipeStreaks(opts, access_token: string) {
+    async wipeStreaks(opts: any, access_token: string) {
         return await super.callApi(DurakAPI.streaksMethod + 'wipe', {
             headers: {
                 'Authorization': `Bearer ${access_token}`
             },
             opts
         }, "DELETE");
+    }
+
+
+    /** Обновление штрихов по Id
+    *
+    * @param {any} id - Id штриха для обновления 
+    * @param {string} access_token - Настоящий access_token
+    * @returns {Promise<Streak>} - Обновленная модель штриха
+    */
+    async relinkStreaks(id: string, access_token: string): Promise<Streak> {
+        const streak = await super.callApi(DurakAPI.streaksMethod + id + '/relink', {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            }
+        }, 'PATCH');
+        return new Streak(streak);
     }
 
 
@@ -165,7 +181,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<any>} - Найденные модели аккаунтов в диапазоне
     */
-    async dumpAccounts(params, access_token: string) {
+    async dumpAccounts(params: any, access_token: string) {
         const { data, count } = await super.callApi(DurakAPI.accountsMethod + 'dump', {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -173,7 +189,7 @@ export class DurakAPI extends TemplateAPI {
             opts: { ...params }
         });
         return {
-            data: data.map(account => new Account(account)),
+            data: data.map((account: Account) => new Account(account)),
             count
         };
     }
@@ -185,7 +201,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<Account>} - Найденная модель аккаунта
     */
-    async refreshAccount(id, access_token: string) {
+    async refreshAccount(id: string, access_token: string) {
         const account = await super.callApi(DurakAPI.accountsMethod + `refresh/${id}`, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -201,7 +217,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<Account>} - Обновленная модель аккаунта
     */
-    async updateAccount(data, access_token: string) {
+    async updateAccount(data: any, access_token: string) {
         const { id, mode } = data;
         const account = await super.callApi(DurakAPI.accountsMethod + id, {
             headers: {
@@ -219,7 +235,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<Account>} - Модель удаленного аккаунта
     */
-    async deleteAccount(id, access_token: string) {
+    async deleteAccount(id: string, access_token: string) {
         const account = await super.callApi(DurakAPI.accountsMethod + id, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -235,7 +251,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<any>} - Статус завершения операции
     */
-    async wipeAccounts(opts, access_token: string) {
+    async wipeAccounts(opts: any, access_token: string) {
         return await super.callApi(DurakAPI.accountsMethod + 'wipe', {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -256,7 +272,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<Statistic>} - Модель статистики по сервису
     */
-    async getStats(params, access_token: string) {
+    async getStats(params: any, access_token: string) {
         const statistic = await super.callApi(DurakAPI.statsMethod, {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -292,7 +308,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<any>} - Модели найденных логов и общее количество
     */
-    async getServiceLogs(params, access_token: string) {
+    async getServiceLogs(params: any, access_token: string) {
         const { data, count } = await super.callApi(DurakAPI.logsMethod + 'service', {
             headers: {
                 'Authorization': `Bearer ${access_token}`
@@ -302,7 +318,7 @@ export class DurakAPI extends TemplateAPI {
             }
         }, "GET");
         return {
-            data: data.map(log => new Log(log)),
+            data: data.map((log: Log) => new Log(log)),
             count
         }
     }
@@ -314,7 +330,7 @@ export class DurakAPI extends TemplateAPI {
     * @param {string} access_token - Настоящий access_token
     * @returns {Promise<any>} - Модели найденных логов и общее количество
     */
-    async getStreakLogs(_data, access_token: string) {
+    async getStreakLogs(_data: any, access_token: string) {
         const { id, params } = _data;
         const { data, count } = await super.callApi(DurakAPI.logsMethod + id, {
             headers: {
@@ -325,7 +341,7 @@ export class DurakAPI extends TemplateAPI {
             }
         }, "GET");
         return {
-            data: data.map(log => new Log(log)),
+            data: data.map((log: Log) => new Log(log)),
             count
         }
     }

@@ -15,6 +15,7 @@ export class Dump {
     }
     private defaultRules: any[];
     public maxPages: number = 0;
+    public count: number = 0;
 
     
     /** Конструктор класса
@@ -36,16 +37,21 @@ export class Dump {
     /** Выполнение запроса на получение данных
      *  @returns - данные
      */
-    public async dump() {
-        const params = this.getParams();
+    public async dump(func?: Function, params?: any) {
+        params = params || this.getParams();
         const dumpResult = await this.api.privateCall(
-            this.api.dump,
+            func || this.api.dump,
             params,
             this.tokens
         );
 
         this.maxPages = Math.ceil(dumpResult.count / 25);
-        return dumpResult;
+        this.count = dumpResult.count;
+        return {
+            data: dumpResult.data,
+            maxPages: this.maxPages,
+            count: this.count,
+        };
     }
 
 
@@ -56,9 +62,9 @@ export class Dump {
         const { page } = this.requestParams;
         delete this.requestParams.page;
         this.requestParams.limit = 25;
-        this.requestParams.offset = (page - 1) * 25;
+        this.requestParams.offset = (Number(page) - 1) * 25;
         
-        return JSON.parse(JSON.stringify(this.requestParams));;
+        return JSON.parse(JSON.stringify(this.requestParams));
     }
     
 
@@ -73,7 +79,6 @@ export class Dump {
             this.requestParams[param] = this.rules[obj.rule as keyof typeof this.rules](obj.value)
         });
     }
-
 
     /** Конвертация параметров запроса в параметры класса
      * 

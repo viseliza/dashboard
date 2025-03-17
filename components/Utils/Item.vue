@@ -1,12 +1,23 @@
 <script setup lang="ts">
-    const props = defineProps<{
-        title: string;
-        style: { icon: string | null, color: string | null };
-        params: Record<string, any>;
-        description: string;
-    }>();
+    import { SignatureAPI } from '~/api';
 
+    const props = defineProps<{
+        signature: string;
+        signatures: Signatures;
+    }>();
+    
     const mode = ref('Ввод данных');
+    const data = shallowRef<any>({});
+
+    const title = props.signatures.getTitle(props.signature);
+    const description = props.signatures.getDescription(props.signature);
+    const style = props.signatures.getStyle(props.signature);
+    const params = props.signatures.getParams(props.signature);
+    const call = props.signatures.getAPICall(props.signature, new SignatureAPI(''));
+
+    watch(data, (value) => {
+        mode.value = 'Результат';
+    });
 </script>
 
 <template>
@@ -24,7 +35,7 @@
                     :style="{ backgroundColor: style.color as string }"
                     class="util-container-icon"
                 >
-                    <img :src="style.icon" alt="icon">
+                    <img :src="style.icon as string" alt="icon">
                 </div>
 
                 <div class="util-container-title">
@@ -38,16 +49,42 @@
                 </div>
             </div>
             <div class="util-container-bottom">
-                <UtilsTab title="Ввод данных" v-model:mode="mode" :enabled="true" />
+                <UtilsTab 
+                    title="Ввод данных" 
+                    v-model:mode="mode" 
+                    :enabled="true" 
+                />
 
-                <UtilsTab title="Результат" v-model:mode="mode" :enabled="false" />
+                <UtilsTab 
+                    title="Результат" 
+                    v-model:mode="mode" 
+                    :enabled="data.headers || false" 
+                />
             </div>
         </header>
 
         <div class="util-container-content">
-            <UtilsForm
+            <ModalsControlForm 
+                v-if="mode === 'Ввод данных'"
+                :api="new SignatureAPI('')"
                 :params="params"
+                :call="call"
+                v-model:data="data"
             />
+
+            <div class="util-container-content result" v-else-if="mode === 'Результат' && data.headers">
+                <BaseCode 
+                    :headers="true"
+                    v-model:data="data.headers"
+                />
+
+                <BaseCode 
+                    :type="'text'"
+                    :headers="true"
+                    title="result"
+                    v-model:data="data.result"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -122,7 +159,13 @@
         padding-top: 0;
         display: flex;
         flex-direction: column;
-        flex: 1 1 auto;
         height: 100%;
+    }
+    .util-container .util-container-content.result {
+        flex: 1 1 auto;
+        padding: 20px;
+        background-color: var(--inversion-color);
+        border-radius: 0 0 10px 10px;
+        gap: 10px;
     }
 </style>

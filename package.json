@@ -4,14 +4,15 @@
     "type": "module",
     "scripts": {
         "build": "nuxt build",
-        "dev": "nuxt dev --host --port 20200",
+        "dev": "nuxt dev --host --port 21000",
         "generate": "nuxt generate",
-        "preview": "cross-env PORT=20200 node .output/server/index.mjs",
+        "preview": "cross-env PORT=21000 node .output/server/index.mjs",
         "postinstall": "nuxt prepare"
     },
     "dependencies": {
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "@mdi/font": "^7.4.47",
+        "@nuxt/ui": "^3.0.0-beta.2",
         "@nuxtjs/color-mode": "^3.5.2",
         "@nuxtjs/google-fonts": "^3.2.0",
         "@pinia/nuxt": "^0.9.0",

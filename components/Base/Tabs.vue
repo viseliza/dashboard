@@ -52,8 +52,8 @@
     }
     nav {
         border-radius: 13px;
-        width: 250px;
-        height: 26px;
+        width: 220px;
+        height: 22px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -74,6 +74,7 @@
     label {
         width: 25%;
         float: left;
+        font-size: 12px;
         text-align: center;
         cursor: pointer;
         opacity: .5;

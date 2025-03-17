@@ -1,4 +1,6 @@
 <template>
+	<div id="notification"></div>
+    
 	<div id="background" class="w-full h-screen flex justify-center items-center bg-gradient-base relative">
         <div id="content" class="main w-full sm:h-[500px] sm:w-[700px] sm:rounded-[15px] flex flex-col sm:flex-row">
             <slot>

@@ -1,7 +1,5 @@
-// @ts-ignore
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
-// @ts-ignore
 export default defineNuxtConfig({
     build: {
         transpile: ['vuetify'],
@@ -10,12 +8,11 @@ export default defineNuxtConfig({
     modules: [
         (_options: any, nuxt: any) => {
             nuxt.hooks.hook('vite:extendConfig', (config: any) => {
-                // @ts-ignore
                 config.plugins.push(vuetify({ autoImport: true }))
             })
         },
         '@nuxtjs/color-mode',
-        '@pinia/nuxt',
+        '@pinia/nuxt'
     ],
 
     vite: {
@@ -29,13 +26,18 @@ export default defineNuxtConfig({
         },
         server: {
             hmr: {
-                port: 20200
+                port: 21000
             }
         },
     },
 
     routeRules: {
-        '/*': { cors: true }
+        '/*': { 
+            cors: true,
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            }
+        }
     },
 
     css: [

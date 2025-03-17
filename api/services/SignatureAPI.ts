@@ -96,4 +96,21 @@ export class SignatureAPI extends TemplateAPI {
         }, "POST");
         return new Signature(response);
     }
+
+
+    /** Получение сигнатуры ConcurentRequest
+    *
+    * @param {any} body - Данные для получения сигнатуры 
+    * @param {string} access_token - Настоящий access_token
+    * @returns {Promise<Signature>} - Модель полученной сигнатуры
+    */
+    async concurentRequest(body: any, access_token: string): Promise<Signature> {
+        const response = await super.callApi(SignatureAPI.METHOD + 'concurentrequest', {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            },
+            body
+        }, "POST");
+        return new Signature(response);
+    }
 }

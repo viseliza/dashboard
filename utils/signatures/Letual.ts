@@ -1,9 +1,14 @@
 import type { SignatureStrategy } from "~/types";
 import letual from '~/assets/images/logos/letual.svg';
+import type { SignatureAPI } from "~/api";
 
 export class Letual implements SignatureStrategy {
     getTitle() {
         return 'Летуаль';
+    }
+
+    getAPICall(api: SignatureAPI) {
+        return api.letual;
     }
 
     getParams(args = null): Record<string, any> {

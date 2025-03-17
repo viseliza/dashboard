@@ -2,14 +2,14 @@
  * 
  */
 export class QueryParams {
-    private route;
-    private router;
     private origin;
+    private route;  
+    private router;
 
-    constructor(route: any, router: any) {
-        this.route  = route;
-        this.router = router;
+    constructor() {
         this.origin = 'http://127.0.0.1';
+        this.route = useRoute();
+        this.router = useRouter();
     }
 
     /** Получение роута с установленными параметрам
@@ -38,8 +38,11 @@ export class QueryParams {
      * @param data - ключи и значения параметров
      * @param callback - дополнительный обработчик
      */
-    public updateQueries(data: any, callback?: Function) {
-        const prevQueries = this.route.query;
+    static updateQueries(data: any, callback?: Function) {
+        const route = useRoute();
+        const router = useRouter();
+        
+        const prevQueries = route.query;
         Object.keys(data).forEach(key => {
             delete prevQueries[key];
         });
@@ -52,9 +55,22 @@ export class QueryParams {
             ...data
         }));
         
-        this.router.replace({
-            path: this.route.path,
+        router.push({
+            path: route.path,
             query: { ...result }
+        });
+    }
+
+    static removeQuery(key: string) {
+        const route = useRoute();
+        const router = useRouter();
+
+        const newQuery = { ...route.query }
+        delete newQuery[key]
+
+        router.push({ 
+            path: route.path, 
+            query: newQuery 
         });
     }
 }   

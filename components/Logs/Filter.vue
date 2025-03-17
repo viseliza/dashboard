@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+    import { QueryParams } from '~/utils';
+
     const props = defineProps<{
         iconType: string;
         icon: string;
@@ -6,14 +8,13 @@
         name: string;
         className?: string;
         activeCount?: number;
-        queryParams: QueryParams;
         dropdownItems?: {
             title: string;
             value: string;
             active?: boolean;
         }[];
     }>();
-
+    ;
     const showDropdown = shallowRef(false);
     const icons = {
         'asc': 'mdi-sort-ascending',
@@ -52,7 +53,9 @@
         <transition name="fade">
             <div v-if="showDropdown && dropdownItems" class="filter-dropdown">
                 <button
-                    @click="queryParams.updateQueries({ [name]: item.value })" 
+                    @click="QueryParams.updateQueries({ 
+                        [name]: item.value 
+                    })" 
                     class="filter-dropdown-item" 
                     v-for="item in dropdownItems" 
                     :key="item.value"

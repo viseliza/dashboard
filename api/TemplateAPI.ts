@@ -73,13 +73,11 @@ export class TemplateAPI {
             return await callback(params, tokens.access_token);
         } catch (error: any) {
             if (error.code == 401 || error.code == 403 || error.status == 302) {
-                const newTokens = await this.refreshAccessToken(tokens);
-                const callbackResult = await callback(params, tokens.access_token);
-                newTokens.updateTokens();
-
-                return callbackResult;
+                const router = useRouter();
+                if (router.currentRoute.value.fullPath !== '/dashboard/login')
+                    router.push('/dashboard/login');
             }
-            console.log(error);
+
             throw new Error('Заглушка'); // TODO
         }
     }
@@ -91,15 +89,25 @@ export class TemplateAPI {
     * @returns {Promise<TokensParams>} - Обновленные токены 
     */
     async refreshAccessToken(tokens: TokensParams) {
-        const response = await this.callApi('auth/refresh', {
-            body: {
-                refresh_token: tokens.refresh_token
-            }, 
-            headers: {
-                'Authorization': `Bearer ${tokens.access_token}`
+        try {
+            const response = await this.callApi('auth/refresh', {
+                body: {
+                    refresh_token: tokens.refresh_token
+                }, 
+                headers: {
+                    'Authorization': `Bearer ${tokens.access_token}`
+                }
+            }, "POST");
+    
+            return new Tokens(response);
+        } catch (error: any) {
+            if (error.code == 401) { 
+                const router = useRouter();
+                if (router.currentRoute.value.fullPath !== '/dashboard/login')
+                    router.push('/dashboard/login');
+                
+                throw new Error('Заглушка'); // TODO
             }
-        }, "POST");
-
-        return new Tokens(response);
+        }
     }
 }
