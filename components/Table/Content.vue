@@ -1,25 +1,16 @@
 <script setup lang="ts">
-    import type { Statistic } from '~/models';
+    import { useServiceStore } from '~/store';
 
-    const props = defineProps<{
+    type Props = {
         data: any[];
-        stats: Statistic;
-        tableMode: string;
-    }>();
-
-    // const modeStats = (key: any, mode: string) => {
-    //     if (key !== 'mode' && key !== 'opened') return undefined;
-    //     mode = key === 'opened' 
-    //         ? mode ? 'opened' : 'not_opened' 
-    //         : mode;
-    //     const stats = props.stats[props.tableMode as keyof Statistic];
-    //     if (!stats[mode as keyof typeof stats]) return undefined;
-    //     const percent = (1 / stats[mode as keyof typeof stats] * 100).toFixed(2);
-    //     return percent;
-    // };
+        call: any;
+        api: any;
+    }
+    const props = defineProps<Props>();
+    const serviceStore = useServiceStore();
 
     const hoveredRow = shallowRef(null);
-    const activeRow = shallowRef<boolean | null>(null);
+    const activeRow = shallowRef<number | null>(null);
     
     const className = (index: number, data: any[]) => {
         if (index === 0) return 'first';
@@ -28,13 +19,23 @@
     }
 
     const borderBottom = (index: number, data: any[]) => {
-        if (data.length < 8 && index === data.length - 1) return '1px solid var(--secondary-color)';
+        if (data.length < 25)
+            return index === data.length - 1 ? 'none' : '1px solid var(--secondary-color)';
+            
         return index === data.length - 1 ? 'none' : '1px solid var(--secondary-color)';
     };
+
+    const translateMode = computed(() => ({
+        'accounts': 'Аккаунты',
+        'streaks': 'Штрихи',
+    }) as any);
 </script>
 
 <template>
-    <TableContainer :count="Object.keys(data[0]).length">
+    <TableContainer 
+        :count="Object.keys(data[0]).length" 
+        :title="translateMode[serviceStore.tableMode]"
+    >
         <template #header>
             <TableHeaderColumn 
                 v-for="key in Object.keys(data[0])" 
@@ -48,21 +49,22 @@
                 v-for="(row, index) in data" 
                 :key="row"
                 :item="row"
-                :stats="stats"
-                :table-mode="tableMode"
+                :call="call"
+                :api="api"
                 @mouseenter="hoveredRow = row"
                 @mouseleave="hoveredRow = null"
-                @active="(value: boolean) => activeRow = value"
+                @active="(value: boolean) => activeRow = value ? index : null"
             >
                 <template #columns>
                     <TableDataColumn 
                         v-for="(column, columnIndex) in Object.keys(row)" 
                         :key="column" 
                         :hovered="hoveredRow === row"
-                        :active="activeRow === row"
+                        :active="activeRow === index"
                         :class-name="className(columnIndex, Object.keys(row))"
                         :name="column"
                         :field="row[column]" 
+                        :is-last-row="index === data.length - 1"
                         :style="{
                             borderBottom: borderBottom(index, data),
                         }"

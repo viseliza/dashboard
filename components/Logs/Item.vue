@@ -66,7 +66,11 @@
             </span>
         </div>
 
-        <BaseCode v-show="showMeta" v-model:data="log.meta" size="14px" />
+        <BaseCode 
+            v-show="showMeta" 
+            v-model:data="log.meta" 
+            size="14px"
+        />
     </div>
 </template>
 
@@ -99,7 +103,7 @@
         transform: rotate(90deg);
     }
     .log-container .log-header .date {
-        font-family: "Roboto Mono", serif;
+        font-family: "JetBrains Mono", serif;
     }
     .log-container .log-header .action {
         background-color: var(--secondary-sub-color);
@@ -111,7 +115,7 @@
         padding: 3px 8px;
     }
     .log-container .log-header .message {
-        font-family: "Roboto Mono", serif;
+        font-family: "JetBrains Mono", serif;
         letter-spacing: .5px;
     }
 

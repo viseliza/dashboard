@@ -1,9 +1,10 @@
 <script setup lang="ts">
-    const props = defineProps<{
-        stats: any;
-        tableMode: string;
+    type Props = {
         item: any;
-    }>();
+        call: any;
+        api: any;
+    }
+    const props = defineProps<Props>();
 
     const isActive = shallowRef(false);
     const emit = defineEmits(['mouseenter', 'mouseleave', 'active']);
@@ -15,7 +16,7 @@
 
 <template>
     <div 
-        class="data-row" 
+        class="data-row"
         @click="isActive = true" 
         @mouseleave="emit('mouseleave')"
         @mouseenter="emit('mouseenter')"
@@ -25,9 +26,9 @@
 
     <Teleport v-if="isActive" to="#modal">
         <ModalsCardModal 
-            :stats="stats"
             :item="item"
-            :table-mode="tableMode"
+            :call="call"
+            :api="api"
             @close="isActive = false"
         >
             <slot name="modal"></slot>

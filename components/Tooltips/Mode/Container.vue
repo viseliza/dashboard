@@ -1,9 +1,13 @@
 <script setup lang="ts">
-    const props = defineProps<{
+    type Props = {
         name: string;
         isActive: boolean;
         tooltipShow: boolean;
-    }>();
+        isMode?: boolean;
+        isExpanded: boolean;
+    };
+    const props = defineProps<Props>();
+    const emit = defineEmits(['click']);
 
     const tranlateKey = computed(() => ({
         'general': 'Обычный',
@@ -11,16 +15,22 @@
         'streaks': 'Штрихи',
         'services': 'Сервисы',
     }));
+
 </script>
 
 <template>
     <button 
         class="mode-container"
-        :class="{ active: isActive }"
+        :class="{ 
+            expanded: isExpanded,
+            active: isActive, 
+            mode: !isMode
+        }"
+        @click="(event) => emit('click', event)"
     >
         <slot></slot>
 
-        <div class="tooltip" :class="{ show: tooltipShow }">
+        <div class="tooltip" :class="{ show: tooltipShow && !isExpanded }">
             {{ tranlateKey[name as keyof typeof tranlateKey] || name }}
         </div>
     </button>
@@ -34,17 +44,22 @@
         justify-content: center;
         align-items: center;
         padding: 10px;
-        background: var(--secondary-color);
         border-radius: 5px;
+        background: var(--secondary-color);
         transition: background linear .3s, color linear .3s;
+    }
+    .mode-container.mode {
+        background: transparent;
     }
     .mode-container.active {
         background: var(--active-color);
         color: var(--inversion-color);
     }
+    .mode-container.expanded {
+        background: var(--secondary-sub-color)
+    }
     .mode-container .tooltip {
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-        color: var(--inversion-color);
         font-weight: 700;
         font-size: 12px;
         position: absolute;
@@ -54,9 +69,9 @@
         width: 100px;
         z-index: 0;
         border-radius: 5px;
-        outline: 2px solid var(--secondary-color);
-        background: var(--secondary-color);
-        color: var(--text-primary);
+        outline: 2px solid var(--text-primary);
+        background: var(--text-primary);
+        color: var(--inversion-color);
         opacity: 0;
         box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
         transform: translate(calc(100% - 135px), 10px);
@@ -72,7 +87,7 @@
         height: 0;
         border-left: 8px solid transparent;
         border-right: 8px solid transparent;
-        border-bottom: 8px solid var(--secondary-color);
+        border-bottom: 8px solid var(--text-primary);
         transition: border-bottom-color linear .2s;
     }
     .mode-container.active .tooltip {

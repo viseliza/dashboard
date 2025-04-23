@@ -1,15 +1,13 @@
 <script lang="ts" setup>
-    import { 
-        PennoeAPI, 
-        TemplateAPI, 
-        DurakAPI
-    } from '~/api';
-    import { 
+    import { useDumpStore, useServiceStore } from '~/store';
+    import { PennoeAPI, TemplateAPI } from '~/api';
+    import {
         ServiceItem, 
         Tokens,
         Filter,
         Statistic
     } from '~/models';
+    import type { TableMode } from '~/types';
 
     const route = useRoute();
     const tokens = new Tokens(Tokens.getTokens());
@@ -30,46 +28,80 @@
     }
 
     /** Registration of services */
-    const serviceStrategy = new ServicesStrategy();
-    serviceStrategy.use('durak', new DurakStrategy());
-    serviceStrategy.use('aptekiplus', new AptekiPlusStrategy());
+    const serviceStrategy = new ServicesStrategy();	
 
-    const api = computed(() => serviceStrategy.getAPI(serviceItem.code));
-    const call = (params: any) => serviceStrategy.getDumpRequest(serviceItem.code, activeMode.value, params);
-    const modes = computed(() => serviceStrategy.getModes(serviceItem.code));
+    /** Strategy methods */
+    const serviceData = computed(() => ({
+        code: serviceItem.code,
+        mode: activeMode.value
+    }));
+
+    /** Strategy methods */
+    const api = computed(() => serviceStrategy.getAPI(serviceData.value));
+    const call = (params: any) => serviceStrategy.getDumpRequest(serviceData.value, params);
+    const updateCall = (params: any) => serviceStrategy.getUpdateRequest(serviceData.value, params);
+    const updateParams = computed(() => serviceStrategy.getUpdateRequestParams(serviceData.value));
+    const modes = computed(() => serviceStrategy.getModes(serviceData.value));
     const activeMode = shallowRef(route.query.mode as string || 'accounts');
-    const displayKeys = computed(() => serviceStrategy.getDisplayKeys(serviceItem.code, activeMode.value));
+    const displayKeys = computed(() => serviceStrategy.getDisplayKeys(serviceData.value));
+    const isRelink = computed(() => serviceStrategy.getRelinkRequestParams(serviceData.value));
+    const isRefresh = computed(() => serviceStrategy.getRefreshRequestParams(serviceData.value));
+    
+    /** Init service store */
+    const serviceStore = useServiceStore();
+    serviceStore.updateParams({
+        tableMode: activeMode.value,
+        serviceCode: serviceItem.code,
+        isRefresh: isRefresh.value,
+        isRelink: isRelink.value,
+        requestParams: updateParams.value,
+    });
 
+    /** Table dump methods */
+    const dumpStore = useDumpStore();
+    dumpStore.initializate({
+        filter_by: route.query.filter_by,
+        order: route.query.order,
+        query: route.query.query,
+        page: route.query.page, 
+    }, ['string', 'string', 'string', 'page']);
+    
+    const stats: Statistic = await serviceStrategy.getStats(serviceData.value) as Statistic;
+    serviceStore.stats = structuredClone(stats);
+    
     const getDisplayData = () => {
         const keys = displayKeys.value;
         return table.value.map((item: any) => {
             return Object.entries(item).reduce((acc: any, [key, value]) => {
-                if (keys.includes(key)) acc[key] = value;
-                if (key.split('_').length > 1  && key.split('_')[1] === 'at') {
-                    
-                    acc[key] = value !== 0 
-                        ? new Date(value as number * 1_000).toLocaleString()
-                        : "—";
-                }
+                if (keys.includes(key)) {
+                    acc[key] = value;
+                    if (key.split('_').length > 1  && key.split('_')[1] === 'at') {
+                        
+                        acc[key] = value !== 0 
+                            ? new Date(value as number * 1_000).toLocaleString()
+                            : "—";
+                    }
+                } 
                 return acc;
             }, {});
         });
     }    
 
-    const dump = new Dump({
-        filter_by: route.query.filter_by,
-        order: route.query.order,
-        query: route.query.query,
-        page: route.query.page, 
-    }, ['string', 'string', 'string', 'page'], api.value, tokens);
+    /** Dump methods */
+    const dump = async () => {
+        const params = dumpStore.params;
+        const dumpResult = await call(params);
 
-    const stats: Statistic = await serviceStrategy.getStats(serviceItem.code) as Statistic;
-    const params = shallowRef(dump.getParams());
-    const dumpData = ref(await dump.dump(call, params.value));
+        dumpStore.table = structuredClone(dumpResult.data);
+        dumpStore.maxPages = Math.ceil(dumpResult.count / 25);
+        dumpStore.count = dumpResult.count;
+    }
+    await dump();
 
-    const table = computed(() => dumpData.value.data);
-    const totalPages = computed(() => dumpData.value.maxPages);
-    const count = computed(() => dumpData.value.count);
+    const table = computed(() => dumpStore.table);
+    const totalPages = computed(() => dumpStore.maxPages);
+    const count = computed(() => dumpStore.count);
+    const params = computed(() => dumpStore.params);
     const displayData = ref(getDisplayData());
     
     const columns = computed(() => Object.keys(displayData.value[0]));
@@ -84,23 +116,54 @@
         },
     }));
 
+    /** After route params change */
     watch(() => route.fullPath, async() => {    
-        dump.refreshRequestParams(route.query);
-        params.value = dump.getParams();
-        dumpData.value = await dump.dump(call, params.value);
+        dumpStore.refreshRequestParams(route.query);
+        await dump();
+        serviceStore.updateParams({
+            tableMode: route.query.mode as TableMode || 'accounts',
+            serviceCode: serviceItem.code,
+            isRefresh: isRefresh.value,
+            isRelink: isRelink.value,
+            requestParams: updateParams.value,
+        });
     });
 
+    /** Display data methods */
+    watch(table, () => {
+        displayData.value = getDisplayData();
+    });
+
+    /** Filter mods methods */
     const filterMods = computed(() => modes.value.map((mode: string) => ({
         name: mode,
         icon: modesIcons.value[mode as keyof typeof modesIcons.value].icon,
         iconType: modesIcons.value[mode as keyof typeof modesIcons.value].iconType,
     })));
 
-    watch(table, () => {
-        displayData.value = getDisplayData();
-    })
-</script>
+    /** Actions */
+    const actionConfirmation = shallowRef<boolean>(false);
+    const acceptDelete = shallowRef<boolean | undefined>(undefined);
+    const actions = computed(() => serviceStrategy.getActions(serviceData.value));
+    const actionsShow = reactive(Object.entries(actions.value).reduce((acc: any, [key, value]) => {
+        acc[key] = false;
+        return acc;
+    }, {}));
 
+    watch(acceptDelete, (value) => {
+        Object.keys(actionsShow).forEach((action: any) => {
+            actionsShow[action] = false;
+        });
+
+        if (value) {
+
+            /** Wipe Request */
+            /** ... */
+        }
+
+        acceptDelete.value = undefined; 
+    });
+</script>
 
 <template>
     <Head>
@@ -108,124 +171,141 @@
     </Head>
 
     <DashboardHeader 
-        :title="'Проект: ' + serviceItem.name + ' (' + count +')'"
+        :title="'Проект: ' + serviceItem.name"
         :paths="['Панель', 'Проекты', serviceItem.name]"
     />
 
-    <FiltersContainer>
-        <template #top-mods>
-            <FiltersMods
-                title="Режим"
-                :mods="filterMods"
-                v-model:active-mode="activeMode"
-            />
-        </template>
-
-        <template #top-general>
-            <LogsFilter
-                title="Фильтр по"
-                name="filter_by"
-                icon="mdi-table-filter"
-                iconType="mdi"
-                :activeCount="params.filter_by ? 1 : undefined"
-                :dropdownItems="Filter.getFilterBy(columns).map((action: any) => ({
-                    title: action.name,
-                    value: action.value,
-                    active: params.filter_by === action.value,
-                }))"
-            />
-
-            <LogsFilter
-                name="order"
-                iconType="mdi"
-                icon="mdi-sort"
-                :activeCount="params.order ? 1 : undefined"
-                title="Сортировка"
-                :dropdownItems="Filter.getOrder().map((type: any) => ({
-                    title: type.name,
-                    value: type.value,
-                    active: params.order === type.value,
-                }))"
-            />
-        </template>
-
-        <template #top-right>
-            <FiltersSearchBox/>
-        </template>
-
-        <template #active-filters>
-            <LogsActiveFilter
-                v-for="[key, value] in Object.entries(params).filter(([key]) => key !== 'limit' && key !== 'offset')"
-                :key="key"
-                :_key="key"
-                :value="value as string"
-            />
-        </template>
-    </FiltersContainer>
-
-    <main>
-        <TableContent 
-            :data="displayData" 
-            :stats="stats" 
-            :table-mode="activeMode"
+    <DashboardCategory 
+        title="Статистика"
+        :contentStyles="{
+            'flexDirection': 'row',
+            'padding': '0 20px',
+        }"
+    >
+        <StatsContent
+            v-for="stat in Object.keys(stats)"
+            :key="stat"
+            :title="stat"
+            :stat="stats[stat as keyof typeof stats]"
         />
-    </main>
+    </DashboardCategory>
+
+    <DashboardCategory 
+        title="Таблица"
+        :styles="{
+            'gap': '10px',
+        }"
+    >
+        <ActionsContent>
+            <ActionsAction
+                v-for="action in Object.keys(actions)"
+                :key="action"
+                :title="action"
+                @click="actionsShow[action] = true"
+        >
+            <Teleport
+                v-if="actionsShow[action]"
+                to="#modal"
+            >
+                <ModalsConfirmModal
+                    v-if="action === 'Удалить все'"
+                    :title="'Удалить все ' + (activeMode === 'accounts' ? 'аккаунты' : 'штрихи')"
+                    :confirmation="actionConfirmation"
+                    @accept="(value) => acceptDelete = value"
+                >
+                    <span>
+                        Для данного действия требуется дополнительное подтверджение. Чтобы подтвердить <b>удаление всех записей таблицы</b>, введите <b>«Подтверждаю, что хочу удалить все {{ activeMode === 'accounts' ? 'аккаунты' : 'штрихи' }}»</b> в поле ниже и нажмите на кнопку "Подтвердить"
+                    </span>
+
+                    <ActionsInput 
+                        :text="'Подтверждаю, что хочу удалить все ' + (activeMode === 'accounts' ? 'аккаунты' : 'штрихи')" 
+                        @confirmation="actionConfirmation = $event"
+                    />
+                </ModalsConfirmModal>
+
+
+                <ModalsControlModal 
+                    v-else
+                    :title="action + ' ' + (activeMode === 'accounts' ? 'аккаунт' : 'штрих')"
+                    :height="'400px'"
+                    @close="actionsShow[action] = false"
+                >
+                    <template #content>
+                        <ModalsControlForm
+                            :name="action + ' ' + (activeMode === 'accounts' ? 'аккаунт' : 'штрих')"
+                            :model="activeMode === 'accounts' ? 'Account' : 'Streak'"
+                            @close="actionsShow[action] = false"
+                            :api="api"
+                            :call="actions[action].request"
+                            :params="actions[action].params"
+                            :styles="{
+                                'padding': '0',
+                                'padding-top': '15px',
+                            }"
+                        />
+                    </template>
+                    </ModalsControlModal>
+                </Teleport>
+            </ActionsAction>
+        </ActionsContent>
+
+        <FiltersContainer>
+            <template #top-mods>
+                <FiltersMods
+                    title="Режим"
+                    :mods="filterMods"
+                    v-model:active-mode="activeMode"
+                    :disabled="true"
+                />
+            </template>
+
+            <template #top-general>
+                <FiltersFilter
+                    title="Фильтр по"
+                    name="filter_by"
+                    :isActive="params.filter_by ? true : false"
+                    :dropdownItems="Filter.getFilterBy(columns).map((action: any) => ({
+                        title: action.name,
+                        value: action.value,
+                        active: params.filter_by === action.value,
+                    }))"
+                />
+
+                <FiltersFilter
+                    name="order"
+                    :isActive="params.order ? true : false"
+                    title="Сортировка"
+                    :dropdownItems="Filter.getOrder().map((type: any) => ({
+                        title: type.name,
+                        value: type.value,
+                        active: params.order === type.value,
+                    }))"
+                />
+            </template>
+
+            <template #active-filters>
+                <FiltersActiveFilter
+                    v-for="[key, value] in Object.entries(params).filter(([key]) => key !== 'limit' && key !== 'offset')"
+                    :key="key"
+                    :_key="key"
+                    :value="value as string"
+                />
+            </template>
+        </FiltersContainer>
+
+        <main>
+            <TableContent 
+                :data="displayData" 
+                :call="updateCall"
+                :api="api"
+            />
+        </main>
+    </DashboardCategory>
 
     <BasePagination
         v-if="totalPages > 1"
         :total-pages="totalPages"
     />
-    <!--<main>
-        <BaseHeader :count="dump.count" title="Аккаунты">
-            <BaseSearchBar/>
-            
-            <BaseAddButton name="аккаунт"/>
-        </BaseHeader>
-        
-        <ProjectTable>
-            <template #header>
-                <td style="
-                    width: 40px; 
-                    background-color: var(--secondary-sub-color);
-                    border: 1px solid var(--secondary-color);
-                    opacity: .5;
-                "></td>
-                
-                <ProjectTableCellHeader 
-                    v-for="key in Object.keys(displayData(table.data[0]))"
-                    :key="key"
-                    :name="key"
-                    :title="translate[key]"
-                />
-            </template>
-
-            <template #content>
-                <ProjectTabeCell
-                    v-for="item in table.data"
-                    :key="item"
-                    :keys="Object.keys(displayData(table.data[0]))"
-                    :item="item"
-                    @click="() => handleClick(item)"
-                />
-            </template>
-        </ProjectTable>
-    </main>
-
-    <Teleport to='#layout'>
-        <ControlBar>
-            <div class="controlbar-content">
-                <ProjectDonutChart
-                    v-if="stats"
-                    :stats="stats"
-                />
-            </div>
-
-            <div v-if="activeModel.id" class="controlbar-content">
-                <span>1</span>
-                {{ activeModel.id }}
-            </div>
-        </ControlBar>
-    </Teleport> -->
 </template>
 
 <style scoped>

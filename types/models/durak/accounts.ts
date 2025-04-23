@@ -16,6 +16,7 @@ export type AccountMode = 'main' | 'farm' | 'reserve_main';
 export interface IAccount {
     id: string;
     token: string,
+    nickname: string,
     balance: number,
     mode: AccountMode,
     enable: boolean,

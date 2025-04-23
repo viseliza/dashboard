@@ -15,10 +15,10 @@ export class DateConvert {
      */
     public convert(period: string) {
         const dateInPeriods: any = {
-            '1': this.setDatesOfDay,
-            '2': this.setDatesOfWeak,
-            '3': this.setDatesOfMonth,
-            '4': this.setDatesOfYear,
+            'day': this.setDatesOfDay,
+            'weak': this.setDatesOfWeak,
+            'month': this.setDatesOfMonth,
+            'year': this.setDatesOfYear,
         }
 
         this.dateStart   = new Date();

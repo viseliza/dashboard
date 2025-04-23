@@ -11,3 +11,6 @@ export * from './Setting';
 export * from './ProxyHelper';
 export * from './ServicesStrategy';
 export * from './services';
+export * from './ServiceHelper';
+export * from './FilterStrategies';
+export * from './Filters';

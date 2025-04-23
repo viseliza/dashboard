@@ -139,6 +139,7 @@
     }
     .field-container-input {
         margin-top: 10px;
+        z-index: 13;
         position: relative;
         outline: 2px solid var(--secondary-color);
         transition: all 0.3s linear;

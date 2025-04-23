@@ -6,20 +6,28 @@
     const enable = defineModel<boolean>('enable');
     
     const description = computed(() => ({
+        'Обновление данных': 'Поля для обновления данных',
         'Авторизация': 'Данные для входа на прокси',
         'Обновление': 'Периодичность обновления прокси',
+        'Данные': 'Основные параметры объекта',
     }));
-    const isCategory = computed(() => props.name === 'Авторизация' || props.name === 'Обновление');
     
+    const titles = computed(() => ([
+        'Обновление данных',
+        'Авторизация',
+        'Обновление',
+        'Данные',
+    ]));
+
     const show = computed(() => {
-        return props.name === 'Авторизация' || props.name === 'Обновление' ? enable.value : true;
+        return titles.value.includes(props.name) ? enable.value : true;
     });
 </script>
 
 <template>
     <div class="category">
         <div 
-            v-if="isCategory"
+            v-if="titles.includes(props.name)"
             class="checkfield"
         >
             <div class="left">

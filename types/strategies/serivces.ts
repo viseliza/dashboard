@@ -1,31 +1,35 @@
-import type { AptekiPlusAPI, DurakAPI } from "~/api";
-
 export interface ServiceStrategy {
-    getAPI(): DurakAPI | AptekiPlusAPI;
+    getAPI(): any;
     getModes(): string[];
     getDisplayKeys(): Record<string, any>;
-    getStats(): Record<string, any>;
-    getDumpRequest(params: Record<string, any>): Record<string, any>;
+    getStats(): any;
+    getActions(mode: string): Record<string, any>;
+    getDumpRequest(): any;
     getDumpRequestParams(): Record<string, any>;
-    getAddRequest(params: Record<string, any>): Record<string, any>;
+    getAddRequest(): any;
     getAddRequestParams(): Record<string, any>;
-    getAddManyRequest(params: Record<string, any>): Record<string, any>;
+    getAddManyRequest(): any;
     getAddManyRequestParams(): Record<string, any>;
-    getUpdateRequest(params: Record<string, any>): Record<string, any>;
+    getUpdateRequest(): any;
     getUpdateRequestParams(): Record<string, any>;
-    getWipeRequest(params: Record<string, any>): Record<string, any>;
+    getWipeRequest(): any;
     getWipeRequestParams(): Record<string, any>;
-    getDeleteRequest(params: Record<string, any>): Record<string, any>;
-    getDeleteRequestParams(): Record<string, any>;
-    getRefreshRequest(params: Record<string, any>): Record<string, any>;
+    getDeleteRequest(): any;
+    getRefreshRequest(): any;
     getRefreshRequestParams(): Record<string, any>;
-    getStatsRequest(params: Record<string, any>): Record<string, any>;
-    getRelinkRequest(params: Record<string, any>): Record<string, any>;
+    getStatsRequest( ): Record<string, any>;
+    getRelinkRequest(): any;
     getRelinkRequestParams(): Record<string, any>;
-    getBalanceRequest(params: Record<string, any>): Record<string, any>;
+    getBalanceRequest(): any;
     getBalanceRequestParams(): Record<string, any>;
-    getProfileRequest(params: Record<string, any>): Record<string, any>;
+    getProfileRequest(): any;
     getProfileRequestParams(): Record<string, any>;
-    getBalanceHistoryRequest(params: Record<string, any>): Record<string, any>;
+    getBalanceHistoryRequest(): any;
     getBalanceHistoryRequestParams(): Record<string, any>;
+}
+
+
+export type ServiceData = {
+    code: string;
+    mode: string;
 }

@@ -14,6 +14,7 @@
     <button 
         @click="emit('click')"
         :style="styles"
+        type="button"
     >
         <v-icon v-if="mdiIcon" :icon="mdiIcon"/>
         <span>

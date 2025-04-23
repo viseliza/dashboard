@@ -5,6 +5,7 @@
         style?: Record<string, any>;
         hovered: boolean;
         active: boolean;
+        isLastRow: boolean;
         className?: string;
     }>();
 
@@ -25,6 +26,7 @@
             'last': className === 'last',
             'active': active,
             'hovered': hovered,
+            'last-row': isLastRow,
         }"
     >
         <div 
@@ -60,8 +62,14 @@
     .data-column.last {
         padding-right: 15px;
     }
+    .data-column.first.last-row {
+        border-radius: 0 0 0 10px;
+    }
+    .data-column.last.last-row {
+        border-radius: 0 0 10px 0;
+    }
     .data-column.active {
-        background: var(--secondary-color);
+        background: var(--secondary-sub-color);
     }
     .data-column.hovered {
         cursor: pointer;

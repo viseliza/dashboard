@@ -55,6 +55,7 @@ export class TemplateAPI {
             return json;
         }
         
+        console.log(json);
         AppError.check(json, response);
 
         throw new AppError(json.detail, json.msg, response.status);
@@ -77,8 +78,8 @@ export class TemplateAPI {
                 if (router.currentRoute.value.fullPath !== '/dashboard/login')
                     router.push('/dashboard/login');
             }
-
-            throw new Error('Заглушка'); // TODO
+            console.log(error);
+            throw new AppError('Заглушка', 'Заглушка', 401); // TODO
         }
     }
 
@@ -88,26 +89,16 @@ export class TemplateAPI {
     * @param {TokensParams} tokens - Настоящие токены
     * @returns {Promise<TokensParams>} - Обновленные токены 
     */
-    async refreshAccessToken(tokens: TokensParams) {
-        try {
-            const response = await this.callApi('auth/refresh', {
-                body: {
-                    refresh_token: tokens.refresh_token
-                }, 
-                headers: {
-                    'Authorization': `Bearer ${tokens.access_token}`
-                }
-            }, "POST");
-    
-            return new Tokens(response);
-        } catch (error: any) {
-            if (error.code == 401) { 
-                const router = useRouter();
-                if (router.currentRoute.value.fullPath !== '/dashboard/login')
-                    router.push('/dashboard/login');
-                
-                throw new Error('Заглушка'); // TODO
+    async refreshAccessToken(tokens: TokensParams): Promise<TokensParams> {
+        const response = await this.callApi('auth/refresh', {
+            body: {
+                refresh_token: tokens.refresh_token
+            }, 
+            headers: {
+                'Authorization': `Bearer ${tokens.access_token}`
             }
-        }
+        }, "POST");
+
+        return new Tokens(response);
     }
 }

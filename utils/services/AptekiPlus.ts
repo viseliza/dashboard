@@ -13,18 +13,36 @@ export class AptekiPlusStrategy implements ServiceStrategy {
 
     getDisplayKeys() {
         return {
-            accounts: ['enable', 'id', 'token', 'balance', 'mode', 'created_at', 'updated_at'],
+            accounts: ['enable', 'id', 'login', 'balance', 'barcode', 'created_at', 'updated_at'],
+            streaks: undefined,
         }
     }
 
-    getDumpRequest(params: Record<string, any>) {
+    getActions(mode: 'accounts' | 'streaks') {
         return {
-            accounts: new AptekiPlusAPI('').dumpAccounts(params, Tokens.getTokens().access_token),
+            accounts: {
+                'Добавить': {
+                    request: new AptekiPlusAPI('').createAccount,
+                    params: this.getAddRequestParams()[mode]
+                },
+                'Удалить все': {
+                    request: new AptekiPlusAPI('').wipeAccounts,
+                    params: this.getWipeRequestParams()[mode]
+                },
+            },
+            streaks: undefined,
+        }
+    }
+
+    getDumpRequest() {
+        return {
+            accounts: new AptekiPlusAPI('').dumpAccounts,
+            streaks: undefined,
         }
     }
 
     getStats() {
-        return new AptekiPlusAPI('').getStats({}, Tokens.getTokens().access_token);
+        return new AptekiPlusAPI('').getStats;
     }
 
     getDumpRequestParams() {
@@ -37,12 +55,14 @@ export class AptekiPlusStrategy implements ServiceStrategy {
         }
         return {
             accounts: object,
+            streaks: undefined,
         }
     }
 
-    getAddRequest(params: AptekiPlusAccountCreate) {
+    getAddRequest() {
         return {
-            accounts: new AptekiPlusAPI('').createAccount(params, Tokens.getTokens().access_token),
+            accounts: new AptekiPlusAPI('').createAccount,
+            streaks: undefined,
         }
     }
 
@@ -60,155 +80,183 @@ export class AptekiPlusStrategy implements ServiceStrategy {
                     required: true,
                 },
             },
+            streaks: undefined,
         }
     }
 
-    getAddManyRequest(params: Record<string, any>) {
+    getAddManyRequest() {
         return {
-            accounts: undefined
+            accounts: undefined,
+            streaks: undefined,
         }
     }
 
     getAddManyRequestParams() {
         return {
-            accounts: undefined
+            accounts: undefined,
+            streaks: undefined,
         }
     }
 
-    getUpdateRequest(params: Record<string, any>) {
+    getUpdateRequest() {
         return {
-            accounts: undefined
+            accounts: undefined,
+            streaks: undefined,
         }
     }
 
     getUpdateRequestParams() {
         return {
-            accounts: undefined
+            accounts: undefined,
+            streaks: undefined,
         }
     }
 
-    getDeleteRequest(params: Record<string, any>) {
+    getDeleteRequest() {
         return {
-            accounts: new AptekiPlusAPI('').deleteAccount(params.id, Tokens.getTokens().access_token)
+            accounts: new AptekiPlusAPI('').deleteAccount,
+            streaks: undefined,
         }
     }
 
     getDeleteRequestParams() {
         return {
-            'id': {
-                example: '1234567890',
-                type: 'string',
-                required: true,
+            accounts: {
+                'id': {
+                    example: '1234567890',
+                    type: 'string',
+                    required: true,
+                },
             },
+            streaks: undefined,
         }
     }
 
-    getWipeRequest(params: Record<string, any>) {
+    getWipeRequest() {
         return {
-            accounts: new AptekiPlusAPI('').wipeAccounts(params, Tokens.getTokens().access_token)
+            accounts: new AptekiPlusAPI('').wipeAccounts,
+            streaks: undefined,
         }
     }
 
     getWipeRequestParams() {
         return {
-            'confirm': {
-                example: true,
-                type: 'boolean',
-                required: true,
+            accounts: {
+                'confirm': {
+                    example: true,
+                    type: 'boolean',
+                    required: true,
+                },
             },
+            streaks: undefined,
         }
     }
 
-    getRefreshRequest(params: Record<string, any>) {
+    getRefreshRequest() {
         return {
-            accounts: new AptekiPlusAPI('').refreshAccount(params.id, Tokens.getTokens().access_token),
+            accounts: new AptekiPlusAPI('').refreshAccount,
             streaks: undefined,
         }
     }
 
     getRefreshRequestParams() {
         return {
-            'id': {
-                example: '1234567890',
-                type: 'string',
-                required: true,
+            accounts: {
+                'id': {
+                    example: '1234567890',
+                    type: 'string',
+                    required: true,
+                },
             },
+            streaks: undefined,
         }
     }
 
-    getStatsRequest(params: Record<string, any>) {
-        return new AptekiPlusAPI('').getStats(params, Tokens.getTokens().access_token);
+    getStatsRequest() {
+        return new AptekiPlusAPI('').getStats;
     }
 
-    getRelinkRequest(params: Record<string, any>) {
+    getRelinkRequest() {
         return {
-            accounts: undefined
+            accounts: undefined,
+            streaks: undefined,
         }
     }
 
     getRelinkRequestParams() {
         return {
-            accounts: undefined
+            accounts: undefined,
+            streaks: undefined,
         }
     }
 
-    getBalanceRequest(params: Record<string, any>) {
+    getBalanceRequest() {
         return {
-            accounts: new AptekiPlusAPI('').getBalance(params.id, Tokens.getTokens().access_token),
+            accounts: new AptekiPlusAPI('').getBalance,
+            streaks: undefined,
         }
     }
 
     getBalanceRequestParams() {
         return {
-            'id': {
-                example: '1234567890',
-                type: 'string',
-                required: true,
+            accounts: {
+                'id': {
+                    example: '1234567890',
+                    type: 'string',
+                    required: true,
+                },
             },
+            streaks: undefined,
         }
     }
 
-    getProfileRequest(params: Record<string, any>) {
+    getProfileRequest() {
         return {
-            accounts: new AptekiPlusAPI('').getProfile(params.id, Tokens.getTokens().access_token),
+            accounts: new AptekiPlusAPI('').getProfile,
+            streaks: undefined,
         }
     }
 
     getProfileRequestParams() {
         return {
-            'id': {
-                example: '1234567890',
-                type: 'string',
-                required: true,
+            accounts: {
+                'id': {
+                    example: '1234567890',
+                    type: 'string',
+                    required: true,
+                },
             },
+            streaks: undefined,
         }
     }
 
-    getBalanceHistoryRequest(params: Record<string, any>) {
-        const { id } = params;
-        delete params.id;
+    getBalanceHistoryRequest() {
         return {
-            accounts: new AptekiPlusAPI('').getBalanceHistory({ id, params }, Tokens.getTokens().access_token),
+            accounts: new AptekiPlusAPI('').getBalanceHistory,
+            streaks: undefined,
         }
     }
 
     getBalanceHistoryRequestParams() {
         return {
-            'id': {
-                example: '1234567890',
-                type: 'string',
-                required: true,
+            accounts: {
+                'id': {
+                    example: '1234567890',
+                    type: 'string',
+                    required: true,
+                },
+                'page': {
+                    example: 1,
+                    type: 'number',
+                    required: false,
+                },
+                'limit': {
+                    example: 20,
+                    type: 'number',
+                    required: false,
+                },
             },
-            'page': {
-                example: 1,
-                type: 'number',
-                required: false,
-            },
-            'limit': {
-                example: 20,
-                type: 'number',
-                required: false,
-            },
+            streaks: undefined,
         }
     }
 }

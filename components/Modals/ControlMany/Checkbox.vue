@@ -73,10 +73,10 @@
         background-color: #fff;
         bottom: calc(2px * v-bind(scale));
         content: "";
-        height: calc(13px * v-bind(scale));
         left: calc(2px * v-bind(scale));
         position: absolute;
         transition: .4s;
+        height: calc(13px * v-bind(scale));
         width: calc(13px * v-bind(scale));
         box-shadow: rgba(0, 0, 0, .2) 0px 1px 2px;
     }
@@ -84,7 +84,7 @@
         background-color: #66bb6a;
     }
     .checkbox-wrapper input:checked + .slider:before {
-        transform: translateX(calc(12.5px * v-bind(scale)));
+        transform: translateX(calc(12px * v-bind(scale))) translateY(calc(-.35px * v-bind(scale)));
     }
     .checkbox-wrapper .slider.round {
         border-radius: calc(17px * v-bind(scale));

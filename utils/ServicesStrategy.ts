@@ -1,4 +1,5 @@
-import type { ServiceStrategy } from "~/types";
+import type { ServiceStrategy, ServiceData } from "~/types";
+import { Tokens } from "~/models";
 
 /** Класс для работы с сервисами */
 export class ServicesStrategy {
@@ -7,47 +8,70 @@ export class ServicesStrategy {
 
     /** Добавление сигнатуры в стратегию 
      * 
-     * @param name - кодовое название сервиса
+     * @param code - кодовое название сервиса
      * @param strategy - класс стратегии сервиса
      */
-    use(name: string, strategy: ServiceStrategy) {
-        this.strategies[name] = strategy;
+    use(code: string, strategy: ServiceStrategy) {
+        this.strategies[code] = strategy;
+    }
+
+    constructor() {
+        this.use('durak', new DurakStrategy());
+        this.use('aptekiplus', new AptekiPlusStrategy());
     }
 
     /***********************/
     /* * * * I N F O * * * */
     /***********************/
 
-    getAPI(name: string) {
-        if (!this.strategies[name]) {
+    getAPI(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getAPI();
+        return this.strategies[data.code].getAPI();
     }
 
     /** Отображаемые в таблице ключи
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @returns - ключи для отображения данных
      */
-    getDisplayKeys(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getDisplayKeys(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getDisplayKeys()[mode];
+        return this.strategies[data.code].getDisplayKeys()[data.mode];
     }
 
     /** Получение статистики сервиса
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @returns - статистика сервиса
      */
-    getStats(name: string) {
-        if (!this.strategies[name]) {
+    getStats(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getStats();
+        return this.strategies[data.code].getStats()(
+            {}, 
+            Tokens.getTokens().access_token
+        );
+    }
+
+    /**********************/
+    /* * A C T I O N S  * */
+    /**********************/
+
+    /** Получение действий сервиса
+     * 
+     * @param data - данные сервиса
+     * @returns - действия сервиса
+     */
+    getActions(data: ServiceData) {
+        if (!this.strategies[data.code]) {
+            throw new Error('Такой стратегии не существует');
+        }
+        return this.strategies[data.code].getActions(data.mode)[data.mode];
     }
 
     /*************************/
@@ -57,231 +81,227 @@ export class ServicesStrategy {
 
     /** Получение режимов сервиса
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @returns - название сервиса на русском
      */
-    getModes(name: string) {
-        if (!this.strategies[name]) {
+    getModes(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getModes();
+        return this.strategies[data.code].getModes();
     }
 
     /** Получение запроса на получение данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
      * @returns - запрос на получение данных
      */
-    getDumpRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getDumpRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getDumpRequest(params)[mode];
+        return this.strategies[data.code].getDumpRequest()[data.mode](
+            params, 
+            Tokens.getTokens().access_token
+        );
     }
 
     /** Получение запроса на получение данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @returns - запрос на получение данных
      */
-    getDumpRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getDumpRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getDumpRequestParams()[mode];
+        return this.strategies[data.code].getDumpRequestParams()[data.mode];
     }
 
     /** Получение запроса на добавление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
      * @returns - запрос на добавление данных
      */
-    getAddRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getAddRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getAddRequest(params)[mode];
+        return this.strategies[data.code].getAddRequest()[data.mode](
+            params, 
+            Tokens.getTokens().access_token
+        );
     }
 
     /** Получение запроса на добавление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @returns - запрос на добавление данных
      */
-    getAddRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getAddRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getAddRequestParams()[mode];
+        return this.strategies[data.code].getAddRequestParams()[data.mode];
     }
 
     /** Получение запроса на добавление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
      * @returns - запрос на добавление данных
      */
-    getAddManyRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getAddManyRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getAddManyRequest(params)[mode];
+        return this.strategies[data.code].getAddManyRequest()[data.mode](
+            params, 
+            Tokens.getTokens().access_token
+        );
     }
 
     /** Получение запроса на добавление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @returns - запрос на добавление данных
      */
-    getAddManyRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getAddManyRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getAddManyRequestParams()[mode];
+        return this.strategies[data.code].getAddManyRequestParams()[data.mode];
     }
 
     /** Получение запроса на обновление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
      * @returns - запрос на обновление данных
      */
-    getUpdateRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getUpdateRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getUpdateRequest(params)[mode];
+        return this.strategies[data.code].getUpdateRequest()[data.mode](
+            params, 
+            Tokens.getTokens().access_token
+        );
     }
 
     /** Получение запроса на обновление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @returns - запрос на обновление данных
      */
-    getUpdateRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getUpdateRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getUpdateRequestParams()[mode];
+        return this.strategies[data.code].getUpdateRequestParams()[data.mode];
     }
 
     
-    /** Получение запроса на добавление данных
+    /** Получение запроса на удаление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
-     * @returns - запрос на добавление данных
+     * @returns - запрос на удаление данных
      */
-    getDeleteRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getDeleteRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getDeleteRequest(params)[mode];
+        return this.strategies[data.code].getDeleteRequest()[data.mode](
+            params.id, 
+            Tokens.getTokens().access_token
+        );
     }
 
-    /** Получение запроса на добавление данных
+    /** Получение запроса на очистку данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
-     * @returns - запрос на добавление данных
-     */
-    getDeleteRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
-            throw new Error('Такой стратегии не существует');
-        }
-        return this.strategies[name].getDeleteRequestParams()[mode];
-    }
-
-    /** Получение запроса на добавление данных
-     * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
-     * @returns - запрос на добавление данных
+     * @returns - запрос на очистку данных
      */
-    getWipeRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getWipeRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getWipeRequest(params)[mode];
+        return this.strategies[data.code].getWipeRequest()[data.mode](
+            params, 
+            Tokens.getTokens().access_token
+        );
     }
 
-    /** Получение запроса на добавление данных
+    /** Получение запроса на получение параметров очистки данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
-     * @returns - запрос на добавление данных
+     * @param data - данные сервиса
+     * @returns - запрос на очистку данных
      */
-    getWipeRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getWipeRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getWipeRequestParams()[mode];
+        return this.strategies[data.code].getWipeRequestParams()[data.mode];
     }
 
-    /** Получение запроса на добавление данных
+    /** Получение запроса на обновление данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
-     * @returns - запрос на добавление данных
+     * @returns - запрос на обновление данных
      */
-    getRefreshRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getRefreshRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getRefreshRequest(params)[mode];
+        return this.strategies[data.code].getRefreshRequest()[data.mode](
+            params.id, 
+            Tokens.getTokens().access_token
+        );
     }
 
-    /** Получение запроса на добавление данных
+    /** Получение запроса на получение параметров обновления данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
-     * @returns - запрос на добавление данных
+     * @param data - данные сервиса
+     * @returns - запрос на обновление данных
      */
-    getRefreshRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getRefreshRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getRefreshRequestParams()[mode];
+        return this.strategies[data.code].getRefreshRequestParams()[data.mode];
     }
 
-    /** Получение запроса на добавление данных
+    /** Получение запроса на релинк данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
-     * @returns - запрос на добавление данных
+     * @returns - запрос на релинк данных
      */
-    getRelinkRequest(name: string, mode: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getRelinkRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getRelinkRequest(params)[mode];
+        return this.strategies[data.code].getRelinkRequest()[data.mode](
+            params.id, 
+            Tokens.getTokens().access_token
+        );
     }
 
-    /** Получение запроса на добавление данных
+    /** Получение запроса на получение параметров релинка данных
      * 
-     * @param name - кодовое название сервиса
-     * @param mode - режим сервиса
-     * @returns - запрос на добавление данных
+     * @param data - данные сервиса
+     * @returns - запрос на релинк данных
      */
-    getRelinkRequestParams(name: string, mode: string) {
-        if (!this.strategies[name]) {
+    getRelinkRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getRelinkRequestParams()[mode];
+        return this.strategies[data.code].getRelinkRequestParams()[data.mode];
     }
 
 
@@ -291,76 +311,85 @@ export class ServicesStrategy {
 
     /** Получение запроса на получение баланса
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
      * @returns - запрос на получение баланса
      */
-    getBalanceRequest(name: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getBalanceRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getBalanceRequest(params);
+        return this.strategies[data.code].getBalanceRequest()[data.mode](
+            params.id, 
+            Tokens.getTokens().access_token
+        );
     }
 
     /** Получение параметров запроса на получение баланса
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @returns - параметры запроса на получение баланса
      */
-    getBalanceRequestParams(name: string) {
-        if (!this.strategies[name]) {
+    getBalanceRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getBalanceRequestParams();
+        return this.strategies[data.code].getBalanceRequestParams();
     }
 
     /** Получение запроса на получение профиля
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
      * @returns - запрос на получение профиля
      */
-    getProfileRequest(name: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getProfileRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getProfileRequest(params);
+        return this.strategies[data.code].getProfileRequest()[data.mode](
+            params.id, 
+            Tokens.getTokens().access_token
+        );
     }
 
     /** Получение параметров запроса на получение профиля
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @returns - параметры запроса на получение профиля
      */
-    getProfileRequestParams(name: string) {
-        if (!this.strategies[name]) {
+    getProfileRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getProfileRequestParams();
+        return this.strategies[data.code].getProfileRequestParams();
     }
 
     /** Получение запроса на получение истории баланса
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @param params - параметры запроса
      * @returns - запрос на получение истории баланса
      */
-    getBalanceHistoryRequest(name: string, params: Record<string, any>) {
-        if (!this.strategies[name]) {
+    getBalanceHistoryRequest(data: ServiceData, params: Record<string, any>) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getBalanceHistoryRequest(params);
+        return this.strategies[data.code].getBalanceHistoryRequest()[data.mode](
+            params.id, 
+            Tokens.getTokens().access_token
+        );
     }
 
     /** Получение параметров запроса на получение истории баланса
      * 
-     * @param name - кодовое название сервиса
+     * @param data - данные сервиса
      * @returns - параметры запроса на получение истории баланса
      */
-    getBalanceHistoryRequestParams(name: string) {
-        if (!this.strategies[name]) {
+    getBalanceHistoryRequestParams(data: ServiceData) {
+        if (!this.strategies[data.code]) {
             throw new Error('Такой стратегии не существует');
         }
-        return this.strategies[name].getBalanceHistoryRequestParams();
+        return this.strategies[data.code].getBalanceHistoryRequestParams();
     }
 }

@@ -7,6 +7,7 @@
         error: boolean;
         _keyCategory?: string;
         marginRight?: boolean;
+        disabled?: boolean;
     }>();
     const model = defineModel<any>('model');
     const error = defineModel<boolean>('error');
@@ -39,9 +40,10 @@
 <template>
     <div class="field-container" :style="{ marginRight: props.marginRight ? '5px' : '0' }">
         <div class="field-container-title">
-            <font-awesome-icon v-if="icon.type === 'fa'" :icon="icon.icon" />
-
-            <v-icon v-else-if="icon.type === 'mdi'">{{ icon.icon }}</v-icon>
+            <BaseIcon :name="_key" :styles="{
+                'width': '20px',
+                'height': '20px',
+            }"/>
 
             <div class="field-container-title-text">
                 <span :style="{ opacity: .4 }">
@@ -55,6 +57,7 @@
         <div v-if="!Array.isArray(params.type)" class="field-container-input">
             <textarea
                 v-if="params.type === 'object'"
+                :disabled="props.disabled"
                 :class="{ 'error-input': error }"
                 v-model="model"
                 :placeholder="params.example"
@@ -62,7 +65,11 @@
 
             <input 
                 v-else
-                :class="{ 'error-input': error }"
+                :class="{ 
+                    'error-input': error,
+                    'disabled-input': props.disabled
+                }"
+                :disabled="props.disabled"
                 type="text" 
                 v-model="model"
                 :placeholder="params.example"
@@ -73,6 +80,7 @@
             <ModalsControlCheckBox 
                 v-for="item in params.type"
                 :key="item"
+                :disabled="props.disabled"
                 :_key="props._key + _keyCategory"
                 :item="item"
                 v-model="model"
@@ -138,6 +146,9 @@
     }
     .field-container-input .error-input input::-webkit-input-placeholder {
         color: red;
+    }
+    .field-container-input .disabled-input {
+        color: var(--text-secondary);
     }
     .field-container-input input {
         outline: none;

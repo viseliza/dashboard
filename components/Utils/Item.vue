@@ -66,10 +66,13 @@
         <div class="util-container-content">
             <ModalsControlForm 
                 v-if="mode === 'Ввод данных'"
+                :name="'Получение сигнатуры  ' + title"
+                :model="'Signature ' + title"
                 :api="new SignatureAPI('')"
                 :params="params"
                 :call="call"
                 v-model:data="data"
+                :styles="{ marginRight: '0px' }"
             />
 
             <div class="util-container-content result" v-else-if="mode === 'Результат' && data.headers">

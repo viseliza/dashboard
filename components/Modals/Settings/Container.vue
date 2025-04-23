@@ -48,13 +48,13 @@
     .backdrop {
         pointer-events: auto;
         display: block;
-        z-index: 10;
+        z-index: 20;
         background-color:rgba(0,0,0,0.2);
     }
     .settings-container-wrapper {
         width:100vw;
         height:100vh;
-        z-index: 11;
+        z-index: 21;
     }
     .settings-container {
         display: flex;

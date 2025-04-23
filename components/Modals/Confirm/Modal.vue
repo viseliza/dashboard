@@ -1,9 +1,18 @@
 <script lang="ts" setup>
-    const props = defineProps<{
+    type Props = {
         title: string;
-    }>();
-    const show = defineModel<boolean>('showModal');
-    const accept = defineModel<boolean>('accept');
+        confirmation?: boolean;
+    }
+    const props = defineProps<Props>();
+    
+    const emit = defineEmits(['accept']);
+    const disabled = computed(() => {
+        if (props.confirmation === undefined) {
+            return false;
+        } else {    
+            return !props.confirmation;
+        }
+    });
 </script>
 
 <template>
@@ -18,12 +27,13 @@
 
         <template #footer>
             <ModalsConfirmButton 
-                v-model:accept="accept"
+                @click="emit('accept', false)"
                 text="Отмена"
             />
 
             <ModalsConfirmButton 
-                v-model:accept="accept"
+                @click="emit('accept', true)"
+                :disabled="disabled"
                 text="Подтвердить"
             />
         </template>

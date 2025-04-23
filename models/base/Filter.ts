@@ -15,7 +15,6 @@ export class Filter {
             name: translatedColumns[column as keyof typeof translatedColumns] || column,
             value: column,
         }));
-        console.log('filterBy', filterBy);
 
         return filterBy;
     }

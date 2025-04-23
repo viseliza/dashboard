@@ -49,13 +49,15 @@
             v-if="showModal"
         >   
             <ModalsControlModal 
-                v-if="showModal"
-                v-model:showModal="showModal"
+                @close="showModal = false"
                 title="Добавление нескольких прокси"
+                :outline="false"
             >
                 <template #content>
                     <ModalsControlManyForm
-                        v-model:show-modal="showModal"
+                        name="Создание нескольких прокси"
+                        model="Proxy"
+                        @close="showModal = false"
                         :api="new ProxyAPI('')"
                         :call="new ProxyAPI('').create"
                         :params="proxyHelper.proxyParams"
@@ -98,7 +100,7 @@
 
     <BasePagination
         v-if="totalPages > 1"
-        v-model="totalPages"
+        :total-pages="totalPages"
     />
 </template>
 

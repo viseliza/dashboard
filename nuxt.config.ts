@@ -41,6 +41,7 @@ export default defineNuxtConfig({
     },
 
     css: [
+        '~/assets/fonts/jetbrainsmono.css',
         '~/assets/fonts/openSans.css',
         '~/assets/fonts/poppins.css',
         '~/assets/fonts/RobotoMono.css',

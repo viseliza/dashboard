@@ -12,9 +12,9 @@ export class AppError extends Error {
 
     /** Инициализация класса
      * 
-     * @param {string} detail 
-     * @param {string} message 
-     * @param {number} code 
+     * @param {string} detail - подробности ошибки
+     * @param {string} message - текст ошибки
+     * @param {number} code - код ошибки
      */
     constructor(detail: string, message: string, code: number) {
         super(message);
@@ -24,8 +24,8 @@ export class AppError extends Error {
 
     /** Проверка ответа от сервера на ошибки
      * 
-     * @param {any} json 
-     * @param {any} response 
+     * @param {any} json - ответ от сервера
+     * @param {any} response - код ответа от сервера
      */
     static check(json: { detail: keyof ErrorMessages | string }, response: { status: number }) {
         const { detail } = json;

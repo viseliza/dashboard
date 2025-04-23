@@ -34,8 +34,7 @@
         justify-content: center;
         padding: 5px;
         border-radius: 5px;
-        background-color: var(--inversion-color);
-        transition: all 0.3s linear;
+        transition: all 0.2s linear;
     }
     .copy-button:hover {
         background-color: var(--secondary-color);
@@ -43,7 +42,7 @@
     .copy-button .v-icon {
         color: var(--text-primary);
         font-size: 16px;
-        transition: all 0.3s linear;
+        transition: all 0.2s linear;
     }
     .copy-button .tooltip {
         position: absolute;
@@ -53,7 +52,7 @@
         font-size: 12px;
         opacity: 0;
         z-index: 1;
-        transition: opacity .3s linear, transform .3s linear;
+        transition: opacity .2s linear, transform .2s linear;
     }
     .copy-button .tooltip:before {
         content: '';

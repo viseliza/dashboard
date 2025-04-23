@@ -110,7 +110,9 @@ export class ProxyHelper {
     }
 
     public getUpdateParams (data: any) {
-        const body = this.getProxyParams(data);
-        return { id: this.id, body };
+        return { 
+            id: this.id, 
+            body: { ...this.getProxyParams(data) } 
+        };
     }
 }

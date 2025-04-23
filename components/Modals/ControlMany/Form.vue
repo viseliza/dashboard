@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { ProxyAPI } from '~/api';
-import { Tokens } from '~/models';
+    import { ProxyAPI } from '~/api';
+    import { Tokens } from '~/models';
+    import { useLoader } from '~/store';
 
     type Props = {
         api: any;
@@ -9,6 +10,8 @@ import { Tokens } from '~/models';
         getParams?: (data: any) => { id: string, body: any };
         styles?: Record<string, any>;
         helper?: any;
+        name: string;
+        model: string;
     }
     type Checkboxes = {
         auth: boolean;
@@ -32,30 +35,47 @@ import { Tokens } from '~/models';
         return template;
     });
     
-    const responseData = ref<any>({});
     const data = ref<any>([{
         value: template.value,
         auth: checkboxes.auth,
         update: checkboxes.update,
         error: false
     }]);
+    const loading = useLoader();
     const currentIndex = shallowRef<number>(0);
 
     const toggleDefault = shallowRef<boolean>(false);
     const isSelect = shallowRef<boolean>(false);
-    const loading = shallowRef<boolean>(false);
     const showNotification = shallowRef<boolean>(false);
 
     const submit = async () => {
-        loading.value = true;
         let params = [];
         for (const item of data.value) {
             params.push(convertToParams(item, template.value));
         }
-        const response = await api.createMany({ data: params}, tokens.access_token);
+        
+        loading.startLoading(
+            params,
+            props.name,
+            props.model
+        );
+
+        try {
+            const response = await api.createMany({ data: params }, tokens.access_token);
+
+            loading.setResult(
+                'success', 
+                'Данные успешно сохранены', 
+                response
+            );
+        } catch (error) {
+            loading.setResult(
+                'fail', 
+                'Ошибка при создании прокси', 
+                error
+            );
+        }
         showNotification.value = true;
-        loading.value = false;
-        showModal.value = false;
     }
 
     const convertToParams = (prevData: any, templateData: string) => {
@@ -158,7 +178,10 @@ import { Tokens } from '~/models';
                 />
             </div>
 
-            <ModalsControlManyArray v-model:model="data">
+            <ModalsControlManyArray 
+                @add="() => selectItem(data.length - 1)"
+                v-model:model="data"
+            >
                 <ModalsControlManyItem
                     v-for="(item, index) in data"
                     :key="item"
@@ -206,10 +229,6 @@ import { Tokens } from '~/models';
                 />
             </Teleport>
         </transition>
-
-        <transition mode="default" name="fade">
-            <DashboardLoading :loading="loading" />
-        </transition>
     </form>
 </template>
 
@@ -244,7 +263,6 @@ import { Tokens } from '~/models';
         font-size: 12px;
         font-weight: 700;
     }
-
 
     form .form-container-bottom {
         display: flex;

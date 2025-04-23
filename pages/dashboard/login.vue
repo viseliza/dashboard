@@ -35,11 +35,14 @@
         });
 
         try {
+            const router = useRouter();
             const tokens = await api.authorize(authLogin);
             tokens.updateTokens();
-            return navigateTo('/dashboard/projects');
+            
+            router.push({
+                path: '/dashboard/projects' 
+            });
         } catch (e: any) {
-            console.log(JSON.parse(JSON.stringify(e)));
             error.code = e.code;
             error.detail = e.detail;
             error.message = e.message;

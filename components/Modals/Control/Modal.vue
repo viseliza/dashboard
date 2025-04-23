@@ -1,23 +1,30 @@
 <script lang="ts" setup>
-    const showModal = defineModel('showModal', {
-        type: Boolean,
-        required: true,
+    type Props = {
+        title: string;
+        height?: string;
+        outline?: boolean;
+    }
+    const props =  withDefaults(defineProps<Props>(), {
+        outline: true
     });
-
-    const props = defineProps({
-        title: String,
-    });
+    const emit = defineEmits(['close']);
 </script>
 
 <template>
     <div class="backdrop"></div>
 
     <div class="modal-container-wrapper">
-        <div class="modal-container">
+        <div 
+            class="modal-container" 
+            :style="{ 
+                'height': height ? height : '700px',
+                'outline': outline ? '2px solid rgb(var(--inversion-color-rgb), .3)' : 'none'
+            }"
+        >
             <header>
                 <h1>{{ title }}</h1>
 
-                <button @click="showModal = false">
+                <button @click="emit('close')">
                     <v-icon>mdi-close</v-icon>
                 </button>
             </header>
@@ -46,11 +53,11 @@
     .backdrop {
         pointer-events: auto;
         display: block;
-        z-index: 10;
+        z-index: 20;
         background-color:rgba(0,0,0,0.2);
     }
     .modal-container-wrapper {
-        z-index: 11;
+        z-index: 21;
     }
     .modal-container {
         display: flex;

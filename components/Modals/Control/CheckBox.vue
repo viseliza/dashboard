@@ -3,6 +3,7 @@
     const props = defineProps<{
         item: string;
         _key: string;
+        disabled?: boolean;
     }>();
 
     const translate = {
@@ -20,6 +21,7 @@
             type="checkbox" 
             v-model="model"
             :value="item"
+            :disabled="props.disabled"
             :id="_key+item"
             :true-value="item"
             :false-value="null"

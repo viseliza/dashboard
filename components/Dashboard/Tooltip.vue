@@ -1,10 +1,10 @@
 <script setup lang="ts">
     const showTooltip = shallowRef(false);
-
-    defineProps<{ 
+    type Props = { 
         text: string,
         style?: Record<string, string>
-    }>();
+    }
+    const props = defineProps<Props>();
 </script>   
 
 <template>

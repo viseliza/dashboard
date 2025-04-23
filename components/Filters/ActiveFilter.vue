@@ -7,6 +7,8 @@
     const isHover = shallowRef(false);
 
     const translateKey: any = {
+        'time': 'Время',
+        'service': 'Сервис',
         'log_type': 'Тип лога',
         'order': 'Порядок',
         'action': 'Действие',
@@ -14,6 +16,10 @@
         'offset': 'Сдвиг',
         'asc': 'По возрастанию',
         'desc': 'По убыванию',
+        'day': 'День',
+        'weak': 'Неделя',
+        'month': 'Месяц',
+        'year': 'Год'
     }
 
     const displayValue = computed(() => {
@@ -21,19 +27,6 @@
             ? translateKey[props.value.toLowerCase()] 
             : props.value;
     });
-
-    const removeFilter = () => {
-        const route = useRoute();
-        const router = useRouter();
-
-        const newQuery = { ...route.query }
-        delete newQuery[props._key]
-
-        router.push({ 
-            path: route.path, 
-            query: newQuery 
-        });
-    }
 </script>
 
 <template>
@@ -59,6 +52,7 @@
 
 <style scoped>
     .active-filter {
+        margin-bottom: 10px;
         position: relative;
         display: flex;
         justify-content: space-between;
@@ -67,7 +61,7 @@
         min-width: 100px;
         padding: 4px 12px;
         border: 2px solid var(--active-color);
-        border-radius: 25px;
+        border-radius: 12px;
         transition: all 0.3s linear;
     }
     .active-filter:hover {
@@ -83,7 +77,7 @@
         top: -12px;
         left: 12px;
         background-color: var(--inversion-color);
-        z-index: 100;
+        z-index: 0;
         font-size: 12px;
         color: var(--active-color);
         font-weight: 700;

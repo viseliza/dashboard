@@ -1,16 +1,16 @@
 <script setup lang="ts">
     import { QueryParams } from '~/utils';
-    interface Props {
+    type Props = {
         mods: any[];
         title: string;
         keyQuery?: string;
+        disabled?: boolean;
     }
     
     const activeMode = defineModel<string>('activeMode');
     const props = withDefaults(defineProps<Props>(), {
         keyQuery: 'mode',
     });
-
     const selectMode = (modeName: string) => {
         if (activeMode.value == modeName) return;
         activeMode.value = modeName;
@@ -24,12 +24,14 @@
 </script>
 
 <template>
-    <LogsFilter
-        name="mode"
-        icon="mdi-playlist-edit"
-        :title="title"
+    <FiltersFilter
+        name="table"
         class-name="border-right"
-        iconType="mdi"
+        :title="title"
+        :disabled="disabled"
+        :style="{
+            width: '110px',
+        }"
     />
 
     <div class="mods-container">
@@ -37,14 +39,21 @@
             v-for="mode in mods" 
             :key="mode.name" 
             :name="mode.name"
+            :isMode="true"
             :isActive="activeMode === mode.name"
-            @selectMode="selectMode" 
+            @click="selectMode" 
         >
             <font-awesome-icon v-if="mode.iconType === 'fa'" :icon="mode.icon" />
             <v-icon v-else-if="mode.iconType === 'mdi'">
                 {{ mode.icon }}    
             </v-icon>
-            <img v-else-if="mode.iconType === 'custom'" class="custom-icon" :src="mode.icon" alt="">
+            <img 
+                v-else-if="mode.iconType === 'custom'" 
+                class="custom-icon" 
+                :class="{ active: activeMode === mode.name }"
+                :src="mode.icon" 
+                alt=""
+            >
         </TooltipsModeContent>
     </div>
 </template>
@@ -61,5 +70,8 @@
     .custom-icon {
         width: 14px;
         height: 14px;
+    }
+    .custom-icon.active {
+        filter: invert(99%) sepia(1%) saturate(2%) hue-rotate(251deg) brightness(111%) contrast(100%);
     }
 </style>

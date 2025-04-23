@@ -3,12 +3,12 @@
     import type { PaginationParams } from '~/types';
     import { Pagination, QueryParams, calculatePages } from '~/utils';
     
-    const props = defineProps<{
+    type Props = {
         totalPages: number;
-    }>();
+    }
+    const props = defineProps<Props>();
     
     const route = useRoute();
-    const router = useRouter();
     
     const currentPage = shallowRef(route.query.page 
         ? isNaN(route.query.page as any) ? 1 : Number.parseInt(route.query.page as string)

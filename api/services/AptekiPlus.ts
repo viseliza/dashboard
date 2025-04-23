@@ -1,5 +1,5 @@
 import { TemplateAPI } from "~/api";
-import { AptekiPlusAccount, AptekiPlusAccountCreate, AptekiPlusAccountWipe, Statistic } from "~/models";
+import { AptekiPlusAccount, AptekiPlusAccountCreate, AptekiPlusAccountWipe, Log, Statistic } from "~/models";
 import type { RequestResult } from "~/types";
 
 export class AptekiPlusAPI extends TemplateAPI {
@@ -177,4 +177,44 @@ export class AptekiPlusAPI extends TemplateAPI {
         });
     }
 
+
+    /***********************/
+    /* * * * L O G S * * * */
+    /***********************/
+    
+    /** Получение логов по сервису
+    *
+    * @param {any} params - Параметры для фильтрации и поиска логов 
+    * @param {string} access_token - Настоящий access_token
+    * @returns {Promise<any>} - Модели найденных логов и общее количество
+    */
+    async getServiceLogs(params: any, access_token: string) {
+        return super.callApi(AptekiPlusAPI.logsMethod + 'service', {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            },
+            opts: {
+                ...params
+            }
+        }, "GET");
+    }
+
+
+    /** Получение логов по штриху
+    *
+    * @param {any} _data - Id штриха и параметры для фильтрации и поиска логов 
+    * @param {string} access_token - Настоящий access_token
+    * @returns {Promise<any>} - Модели найденных логов и общее количество
+    */
+    async getStreakLogs(_data: any, access_token: string) {
+        const { id, params } = _data;
+        return super.callApi(AptekiPlusAPI.logsMethod + id, {
+            headers: {
+                'Authorization': `Bearer ${access_token}`
+            },
+            opts: {
+                ...params
+            }
+        }, "GET");
+    }
 }

@@ -13,7 +13,11 @@
     const showConfirmModal = shallowRef<boolean>(false);
     const acceptDelete = shallowRef<boolean | undefined>(undefined);
     const showNotification = shallowRef<boolean>(false);
-    const proxyHelper = new ProxyHelper(props.proxy.id, props.proxy, true);
+    const proxyHelper = new ProxyHelper(
+        props.proxy.id, 
+        props.proxy, 
+        true
+    );
     const emit = defineEmits<{(e: 'dataChanged'): void;}>();
 
     const deleteProxy = () => {
@@ -21,15 +25,6 @@
     }
     watch(data, () => {
         emit('dataChanged');
-    });
-
-    watch(acceptDelete, () => {
-        if (acceptDelete.value) {
-            new ProxyAPI('').delete(props.proxy.id, Tokens.getTokens().access_token);
-            emit('dataChanged');
-        }
-        acceptDelete.value = undefined;
-        showConfirmModal.value = false;
     });
 
     watch(acceptDelete, (value) => {
@@ -94,9 +89,9 @@
         v-if="showConfirmModal"
     >
         <ModalsConfirmModal 
-            v-model:showModal="showConfirmModal"
-            v-model:accept="acceptDelete"
+            @accept="(value) => acceptDelete = value"
             title="Подтверждение удаления прокси"
+            :confirmation="undefined"
         >
             <span>Вы действительно хотите удалить прокси? После подтверждения удаления, вы не сможете восстановить данную запись. Чтобы отменить действие, нажмите на кнопку "<b>Отмена</b>".</span>
         </ModalsConfirmModal>
@@ -107,13 +102,14 @@
         v-if="showModal"
     >
         <ModalsControlModal 
-            v-if="showModal"
-            v-model:showModal="showModal"
+            @close="showModal = false"
             title="Обновление прокси"
         >
             <template #content>
-                <ModalsControlForm 
-                    v-model:show-modal="showModal"
+                <ModalsControlForm
+                    name="Создание прокси"
+                    model="Прокси"
+                    @close="showModal = false"
                     v-model:data="data"
                     :with-categories="true"
                     :api="new ProxyAPI('')"

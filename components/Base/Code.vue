@@ -6,6 +6,7 @@
         title?: string;
         size?: string;
         styles?: Record<string, string>;
+        preStyles?: Record<string, string>;
         isExpandable?: boolean;
         stringfy?: Function;
     }
@@ -18,21 +19,21 @@
         isExpandable: false,
     });
     const data = defineModel<any>('data');
+    const expanded = shallowRef(false);
     
     const headersValue = computed(() => {
         return JSON.stringify(data.value, props.stringfy ? props.stringfy() : null, 4);
     });
 
-    const isExpanded = ref(false);
     const expand = computed(() => {
         if (props.isExpandable) {
             return {
                 container : {
-                    maxHeight: isExpanded.value ? '100%' : '100px',
+                    maxHeight: expanded.value ? '100%' : '100px',
                     borderRadius: '10px',
                 }, 
                 button: {
-                    opacity: isExpanded.value ? 0 : 0.6,
+                    opacity: expanded.value ? 0 : 0.6,
                 }
             }
         }
@@ -43,8 +44,9 @@
 <template>
     <div 
         class="code-container"
-        @mouseenter="isExpanded = true"
-        @mouseleave="isExpanded = false"
+        :style="{ boxShadow: !isExpandable ? 'rgba(149, 157, 165, 0.2) 0px 8px 24px' : 'none' }"
+        @mouseenter="expanded = true"
+        @mouseleave="expanded = false"
     >
         <div v-if="headers" class="code-container-headers">
             <span class="text" :style="{ fontSize: size }">{{ title }}</span>
@@ -58,7 +60,7 @@
             :style="{ fontSize: size, ...styles, ...expand.container }"
         >
             <pre
-                :style="{ fontSize: size }"
+                :style="{ fontSize: size, ...preStyles }"
                 v-if="type === 'highlight'"
                 v-html="CodeEditor.syntaxHighlight(headersValue)"
             ></pre>
@@ -72,6 +74,7 @@
             </span>
 
             <div 
+                v-if="isExpandable && !expanded"
                 class="expand-button"
                 :style="expand.button"
             >
@@ -92,18 +95,19 @@
     .boolean,
     .null,
     .key {
-        font-family: "Roboto Mono", serif;
+        font-family: "JetBrains Mono", serif;
     }
     .boolean,
-    .null { color: #508ec1; }
-    .string { color: #c08973; }
-    .number { color: #a9c19f; }
-    .key { color: #a4dffe; }
+    .null { color: var(--code-type-null); }
+    .string { color: var(--code-type-string); }
+    .number { color: var(--code-type-number); }
+    .key { color: var(--code-type-key); }
 
     .code-container {
         display: flex;
         position: relative;
         flex-direction: column;
+        border-radius: 10px;
     }
     .code-container .expand-button {
         position: absolute;
@@ -111,11 +115,10 @@
         left: 0;
         right: 0;
         display: flex;
-        background: var(--text-primary);
+        background: var(--inversion-color);
         padding: 10px;
         border-radius: 0 0 10px 10px;
         align-items: center;
-
         transition: opacity 0.3s linear;
         justify-content: center;
     }
@@ -123,7 +126,6 @@
         transition: opacity 0.3s linear;
     }
     .code-container .expand-button button {
-        color: var(--inversion-color);
         font-size: 12px;
         font-weight: 700;
     }
@@ -131,26 +133,24 @@
     .code-container .code-container-headers {
         display: flex;
         align-items: center;
-        background-color: var(--text-primary);
-        padding: 10px 15px;
+        background-color: var(--secondary-color);
+        border-bottom: 1px solid var(--inversion-color);
+        padding: 5px 15px;
         border-radius: 10px 10px 0 0;
         justify-content: space-between;
     }
     .code-container .code-container-headers .text {
-        letter-spacing: 1px;
+        letter-spacing: .5px;
         font-family: "Roboto Mono", serif;
         color: #c08973;
         font-weight: 700;
-        text-shadow: 2px 2px 5px rgba(192, 137, 115, 0.8);
     }
-
     .code-container .code-details {
         display: flex;
         flex-direction: column;
         position: relative;
         border-radius: 10px;
-        color: #fff;
-        background-color: #242424;
+        background-color: var(--code-bg);
         font-family: "Roboto Mono", serif;
         overflow-x: auto;
         transition: max-height 0.3s linear;

@@ -34,17 +34,18 @@
     }
     .backdrop {
         background-color: rgba(0, 0, 0, 0.2);
-        z-index: 10;
+        z-index: 20;
         pointer-events: auto;
     }
     .modal-container-wrapper {
-        z-index: 11;
+        z-index: 21;
         display: flex;
         align-items: center;
         justify-content: center;
         height: 100%;
     }
     .modal-container-confirm {
+        outline: 2px solid rgb(var(--inversion-color-rgb), .3);
         display: flex;
         flex-direction: column;
         width: 600px;
@@ -68,6 +69,7 @@
     .modal-container-confirm main {
         flex: 1 1 auto;
         flex-direction: column;
+        gap: 10px;
     }
     .modal-container-confirm footer {
         border-top: 1px solid var(--secondary-color);

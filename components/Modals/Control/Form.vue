@@ -1,21 +1,24 @@
 <script setup lang="ts">
     import { Tokens } from '~/models';
-
+    import { useLoader } from '~/store';
     type Props = {
         api: any;
         params: Record<string, any>;
         call: any;
         withCategories?: boolean;
-        getParams?: (data: any) => { id: string, body: any };
+        getParams?: (data: any) => any;
         styles?: Record<string, any>;
+        bottomStyles?: Record<string, any>;
         helper?: any;
+        name: string;
+        model: string;
     }
     const props = defineProps<Props>();
-    const showModal = defineModel<boolean>('showModal');
+    const emit = defineEmits(['close', 'success']);
     const data = defineModel<any>('data');
     
+    const loaderStore = useLoader();
     const toggle = shallowRef<boolean>(false);
-    const loading = shallowRef<boolean>(false);
 
     /** Реактивный объект со всеми моделями для формы */
     const models = reactive<{ [key: string]: any }>(
@@ -39,27 +42,47 @@
     );
 
     const submit = async () => {
-        loading.value = true;
-        let error = false;
+        loaderStore.startLoading(
+            props.getParams 
+                ? props.getParams.apply(props.helper, [models]) 
+                : Object.entries(models).reduce((params: any, [key, value]) => {
+                    const _value = models[key].value
+                    params[key] = _value === undefined ? null : _value;
+                    return params;
+                }, {}),
+            props.name,
+            props.model
+        );
+        const error: any = {};
 
         Object.keys(models).forEach((key) => {
             if (props.withCategories) {
                 Object.keys(models[key]).forEach((_key: any) => {
                     if (models[key][_key].value === '' && props.params[key][_key].required) {
                         models[key][_key].error = true;
-                        error = true;
+                        error[_key] = true;
                     }
                 });
             } else {
-                if (models[key].value == '' && props.params[key].required) {
+                if ((!models[key].value && (models[key].value !== false || models[key].value !== 0))  && props.params[key].required) {
                     models[key].error = true;
-                    error = true;
+                    error[key] = true;
                 }
             }
         });
         
-        if (error) {
-            loading.value = false;
+        if (Object.keys(error).length > 0) {
+            const errorDetails = {
+                details: {
+                    type: 'missing',
+                    loc: Object.keys(error),
+                }
+            }
+            loaderStore.setResult(
+                'fail',
+                'Были заполнены не все обязательные поля, они помечены звездочкой',
+                errorDetails
+            );
             return;
         }
 
@@ -70,14 +93,24 @@
                 return params;
             }, {});
 
-        data.value = await props.api.privateCall(
-            props.call,
-            convertedData,
-            Tokens.getTokens()
-        )
+        try { 
+            data.value = await props.call(convertedData, Tokens.getTokens().access_token);
+        } catch (e) {
+            loaderStore.setResult(
+                'fail', 
+                'Произошла какая-то ошибка, проверьте данные и попробуйте еще раз',
+                JSON.parse(JSON.stringify(e))
+            );
+            return;
+        }
 
-        loading.value = false;
-        showModal.value = false;
+        loaderStore.setResult(
+            'success', 
+            'Данные успешно сохранены',
+            data.value
+        );
+        emit('success', convertedData);
+        emit('close');
     }
 
     watch(toggle, (value) => {
@@ -123,25 +156,27 @@
 <template>
     <form @submit.prevent="submit">
         <div 
-            v-if="!props.withCategories"
+            v-if="!withCategories"
             class="form-container"
-            :style="props.styles"
+            :style="{ ...styles }"
         >
             <ModalsControlField 
                 v-for="param in Object.keys(props.params)" 
                 :key="param" 
                 :_key="param"
-                :marginRight="true"
+                :marginRight="!styles?.marginRight"
                 :params="props.params[param]"
                 v-model:model="models[param].value"
                 v-model:error="models[param].error"
             />
+
+            <slot name="disabled-fields" />
         </div>
 
         <div 
             v-else
             class="form-container"
-            :style="props.styles"
+            :style="{ ...styles }"
         >
             <ModalsControlCategory
                 v-for="key in Object.keys(props.params)"
@@ -159,31 +194,18 @@
                     v-model:error="models[key][param].error"
                 />
             </ModalsControlCategory>
+            
+            <slot name="disabled-fields" />
         </div>
 
-        <div class="form-container-bottom">
-            <ModalsControlToggle v-model="toggle" />
-
-            <div class="buttons-container">
-                <button 
-                    @click="showModal = false"
-                    class="cancel-button"
-                >
-                    Отмена
-                </button>
-
-                <button 
-                    type="submit"
-                    class="save-button"
-                >
-                    Сохранить
-                </button>
-            </div>
-        </div>
-        
-        <transition mode="default" name="fade">
-            <DashboardLoading :loading="loading" />
-        </transition>
+        <ModalsControlFooter 
+            :styles="bottomStyles"
+            @close="emit('close')"
+        >   
+            <template #bottom-left>
+                <slot name="bottom-left" />
+            </template>
+        </ModalsControlFooter>
     </form>
 </template>
 
@@ -205,37 +227,5 @@
         flex: 1 1 auto; 
         margin-right: 5px;
         overflow-y: auto;
-    }
-    form .form-container-bottom {
-        display: flex;
-        justify-content: space-between;
-        padding: 15px 0px 0;
-    }
-    form .form-container-bottom .buttons-container {
-        display: flex;
-        gap: 10px;
-    }
-    form .form-container-bottom .buttons-container button {
-        padding: 7px 16px;
-        font-size: 12px;
-        font-weight: 700;
-        border-radius: 5px;
-    }
-    form .form-container-bottom .buttons-container .cancel-button {
-        outline: 1px solid var(--text-secondary);
-    }
-    form .form-container-bottom .buttons-container .save-button {
-        background-color: var(--text-primary);
-        color: var(--inversion-color);
-    }
-
-    .fade-enter-active,
-    .fade-leave-active {
-        transition: opacity .3s linear;
-    }
-
-    .fade-enter,
-    .fade-leave-to {
-        opacity: 0
     }
 </style>

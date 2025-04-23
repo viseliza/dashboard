@@ -8,3 +8,5 @@ export interface IServiceItem {
 export interface IServices {
     data: Array<ServiceItem>;
 }
+
+export type TableMode = 'accounts' | 'streaks';

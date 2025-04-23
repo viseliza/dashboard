@@ -13,19 +13,48 @@ export class DurakStrategy implements ServiceStrategy {
 
     getDisplayKeys() {
         return {
-            accounts: ['enable', 'id', 'token', 'balance', 'mode', 'created_at', 'updated_at'],
+            accounts: ['enable', 'id', 'nickname', 'balance', 'mode', 'created_at', 'updated_at'],
             streaks: ['id', 'points', 'opened', 'opened_at', 'created_at', 'updated_at'],
         }
     }
 
     getStats() {
-        return new DurakAPI('').getStats({}, Tokens.getTokens().access_token);
+        return new DurakAPI('').getStats;
     }
 
-    getDumpRequest(params: Record<string, any>) {
+    getActions(mode: 'accounts' | 'streaks') {
         return {
-            accounts: new DurakAPI('').dumpAccounts(params, Tokens.getTokens().access_token),
-            streaks: new DurakAPI('').dumpStreaks(params, Tokens.getTokens().access_token),
+            accounts: {
+                'Добавить': {
+                    request: new DurakAPI('').createAccount,
+                    params: this.getAddRequestParams()[mode],
+                },  
+                'Удалить все': {
+                    request: new DurakAPI('').wipeAccounts,
+                    params: this.getWipeRequestParams()[mode],
+                },
+            },
+            streaks: {
+                'Добавить': {
+                    request: new DurakAPI('').createStreak,
+                    params: this.getAddRequestParams()[mode],
+                },
+                'Добавить несколько': {
+                    request: new DurakAPI('').createManyStreak,
+                    params: this.getAddManyRequestParams()[mode],
+                },
+                'Удалить все': {
+                    request: new DurakAPI('').wipeStreaks,
+                    params: this.getWipeRequestParams()[mode]
+                },
+            },
+        }
+    }
+
+    getDumpRequest() {
+        return {
+            accounts: new DurakAPI('').dumpAccounts,
+            streaks: new DurakAPI('').dumpStreaks,
         }
     }
 
@@ -43,10 +72,10 @@ export class DurakStrategy implements ServiceStrategy {
         }
     }
 
-    getAddRequest(params: Record<string, any>) {
+    getAddRequest() {
         return {
-            accounts: new DurakAPI('').createAccount(params, Tokens.getTokens().access_token),
-            streaks: new DurakAPI('').createStreak(params, Tokens.getTokens().access_token),
+            accounts: new DurakAPI('').createAccount,
+            streaks: new DurakAPI('').createStreak,
         }
     }
 
@@ -74,15 +103,16 @@ export class DurakStrategy implements ServiceStrategy {
         }
     }
 
-    getAddManyRequest(params: Record<string, any>) {
+    getAddManyRequest() {
         return {
             accounts: undefined,
-            streaks: new DurakAPI('').createManyStreak(params, Tokens.getTokens().access_token),
+            streaks: new DurakAPI('').createManyStreak,
         }
     }
 
     getAddManyRequestParams() {
         return {
+            accounts: undefined,
             streaks: {
                 'points': {
                     example: 10_000,
@@ -98,10 +128,10 @@ export class DurakStrategy implements ServiceStrategy {
         }
     }
 
-    getUpdateRequest(params: Record<string, any>) {
+    getUpdateRequest() {
         return {
-            accounts: new DurakAPI('').updateAccount(params, Tokens.getTokens().access_token),
-            streaks: new DurakAPI('').updateStreak(params, Tokens.getTokens().access_token),
+            accounts: new DurakAPI('').updateAccount,
+            streaks: new DurakAPI('').updateStreak,
         }
     }
 
@@ -134,65 +164,67 @@ export class DurakStrategy implements ServiceStrategy {
         }
     }
 
-    getDeleteRequest(params: Record<string, any>) {
+    getDeleteRequest() {
         return {
-            accounts: new DurakAPI('').deleteAccount(params.id, Tokens.getTokens().access_token),
-            streaks: new DurakAPI('').deleteStreak(params.id, Tokens.getTokens().access_token),
+            accounts: new DurakAPI('').deleteAccount,
+            streaks: new DurakAPI('').deleteStreak,
         }
     }
 
-    getDeleteRequestParams() {
+    getWipeRequest() {
         return {
-            'id': {
-                example: '1234567890',
-                type: 'string',
-                required: true,
-            },
-        }
-    }
-
-    getWipeRequest(params: Record<string, any>) {
-        return {
-            accounts: new DurakAPI('').wipeAccounts(params, Tokens.getTokens().access_token),
-            streaks: new DurakAPI('').wipeStreaks(params, Tokens.getTokens().access_token),
+            accounts: new DurakAPI('').wipeAccounts,
+            streaks: new DurakAPI('').wipeStreaks,
         }
     }
 
     getWipeRequestParams() {
         return {
-            'confirm': {
-                example: true,
-                type: 'boolean',
-                required: true,
+            accounts: {
+                'confirm': {
+                    example: true,
+                    type: 'boolean',
+                    required: true,
+                },
+            },
+            streaks: {
+                'confirm': {
+                    example: true,
+                    type: 'boolean',
+                    required: true,
+                },
             },
         }
     }
 
-    getRefreshRequest(params: Record<string, any>) {
+    getRefreshRequest() {
         return {
-            accounts: new DurakAPI('').refreshAccount(params.id, Tokens.getTokens().access_token),
+            accounts: new DurakAPI('').refreshAccount,
             streaks: undefined,
         }
     }
 
     getRefreshRequestParams() {
         return {
-            'id': {
-                example: '1234567890',
-                type: 'string',
-                required: true,
+            accounts: {
+                'id': {
+                    example: '1234567890',
+                    type: 'string',
+                    required: true,
+                },
             },
+            streaks: undefined,
         }
     }
 
-    getStatsRequest(params: Record<string, any>) {
-        return new DurakAPI('').getStats(params, Tokens.getTokens().access_token);
+    getStatsRequest() {
+        return new DurakAPI('').getStats;
     }
 
-    getRelinkRequest(params: Record<string, any>) {
+    getRelinkRequest() {
         return {
             accounts: undefined,
-            streaks: new DurakAPI('').relinkStreaks(params.id, Tokens.getTokens().access_token),
+            streaks: new DurakAPI('').relinkStreaks,
         }
     }
 
@@ -209,7 +241,7 @@ export class DurakStrategy implements ServiceStrategy {
         }
     }
 
-    getBalanceRequest(params: Record<string, any>) {
+    getBalanceRequest() {
         return {
             accounts: undefined,
             streaks: undefined,
@@ -223,7 +255,7 @@ export class DurakStrategy implements ServiceStrategy {
         }
     }
 
-    getProfileRequest(params: Record<string, any>) {
+    getProfileRequest() {
         return {
             accounts: undefined,
             streaks: undefined,
@@ -237,7 +269,7 @@ export class DurakStrategy implements ServiceStrategy {
         }
     }
 
-    getBalanceHistoryRequest(params: Record<string, any>) {
+    getBalanceHistoryRequest() {
         return {
             accounts: undefined,
             streaks: undefined,

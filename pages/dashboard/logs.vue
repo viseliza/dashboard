@@ -1,34 +1,114 @@
 <script lang="ts" setup>
-    import { LogsAPI, TemplateAPI } from '~/api';
+    import { PennoeAPI, TemplateAPI } from '~/api';
+    import { useDumpStore } from '~/store';
     import { Tokens, Log } from '~/models';
+    import { QueryParams } from '~/utils';
     import projects from '~/assets/images/navbar/projects.svg';
 
     const route = useRoute();
     const tokens = new Tokens(Tokens.getTokens());
-    const logsAPI = new LogsAPI(
+    const servicesAPI = new PennoeAPI(
         TemplateAPI.x_token,
-        tokens.access_token, 
     );
+    
+    /** Инициализация стратегии фильтров */
+    const filterStrategies = new FilterStrategies();
+    filterStrategies.use('general', new GeneralStrategy());
+    filterStrategies.use('services_durak', new DurakServiceStrategy());
+    filterStrategies.use('services_aptekiplus', new AptekiPlusServiceStrategy());
+    filterStrategies.use('streaks_durak', new DurakStreakStrategy());
+    filterStrategies.use('streaks_aptekiplus', new AptekiPlusStreakStrategy());
 
-    const dump = new Dump({
-        action: route.query.action,
-        log_type: route.query.log_type,
-        from_timestamp: route.query.from_timestamp,
-        to_timestamp: route.query.to_timestamp,
-        order: route.query.order,
-        page: route.query.page,
-    }, ['string', 'string', 'timestamp', 'timestamp', 'string', 'page'], logsAPI, tokens);
+    const table = shallowRef(route.query.table || 'general');
+    const time = computed(() => route.query.time);
+    const service = computed(() => route.query.service);
+    const name = computed(() => table.value !== 'general' && service.value
+        ? table.value + '_' + service.value
+        : 'general'); 
+    
+    const initData = () => {
+        const filterParams = filterStrategies.getFilters(name.value);
+        const requestParams = Object.keys(filterParams).reduce((acc: any, key: string) => {
+            acc[key] = route.query[key] as string;
+            return acc;
+        }, {});
 
-    const dumpData = ref(await dump.dump());
-    const logs = computed(() => dumpData.value.data);
-    const totalPages = computed(() => dumpData.value.maxPages);
-    const count = computed(() => dumpData.value.count);
-    const params = ref(dump.getParams());
+        return {
+            requestParams,
+            rules: Object.values(filterParams),
+        };
+    };
+    watch(name, async () => {
+        const { requestParams, rules } = initData();
 
+        dumpStore.initializate(
+            requestParams, 
+            rules
+        );
+
+        delete requestParams.service;
+        const deleteKeys = Object.keys(requestParams);
+
+        if (table.value === 'general')
+            deleteKeys.push('service');
+        
+        deleteKeys.forEach((key) => {
+            if (route.query[key])
+                QueryParams.removeQuery(key);
+        });
+    });
+
+    const dumpStore = useDumpStore();
+
+    const { requestParams, rules } = initData();
+
+    dumpStore.initializate(
+        requestParams, 
+        rules
+    );
+    const call = async (requestParams: any) => {
+        const request = filterStrategies.getRequest(name.value);
+        return await request(requestParams, tokens.access_token);
+    }
+    const actions = computed(() => filterStrategies.getActions(name.value));
+
+    const dump = async () => {
+        const params = structuredClone(dumpStore.params);
+
+        if (time.value) {
+            const dateConvert = new DateConvert();
+            const { 
+                from_timestamp, 
+                to_timestamp
+            } = dateConvert.convert(time.value as string);
+            params['from_timestamp'] = from_timestamp;
+            params['to_timestamp'] = to_timestamp;
+        }
+        
+        delete params['service'];
+        delete params['time'];
+        
+        const dumpResult = await call(params);
+
+        dumpStore.table = structuredClone(dumpResult.data);
+        dumpStore.maxPages = Math.ceil(dumpResult.count / 25);
+        dumpStore.count = dumpResult.count;
+    }
+    await dump();
+
+    const data = computed(() => dumpStore.table);
+    const totalPages = computed(() => dumpStore.maxPages);
+    const count = computed(() => dumpStore.count);
+    const params = computed(() => dumpStore.params);
+    const services = await servicesAPI.getServices({}, tokens.access_token);
+
+    watch(params, () => {
+        console.log(params.value)
+    })
+    
     watch(() => route.fullPath, async () => {
-        dump.refreshRequestParams(route.query);
-        dumpData.value = await dump.dump();
-        params.value = dump.getParams();
+        dumpStore.refreshRequestParams(route.query);
+        await dump();
     });
 
     const mods = computed(() => [{
@@ -44,7 +124,20 @@
         icon: 'fa-solid fa-barcode',
         iconType: 'fa',
     }]);
-    const activeMode = shallowRef('general');
+
+    const times = computed(() => ([{
+        name: 'День',
+        code: 'day'
+    },{
+        name: 'Неделя',
+        code: 'weak'
+    },{
+        name: 'Месяц',
+        code: 'month'
+    },{
+        name: 'Год',
+        code: 'year'
+    }]));
 </script>
 
 <template>
@@ -57,83 +150,106 @@
         :paths="['Панель', 'Логи']"
     />
 
-    <FiltersContainer>
-        <template #top-mods>
-            <FiltersMods
-                :mods="mods"
-                v-model:active-mode="activeMode"
-                title="Режим"
+    <DashboardCategory title="Таблица">        
+        <FiltersContainer>
+            <template #top-mods>
+                <FiltersMods
+                    title="Таблица"
+                    key-query="table"
+                    :mods="mods"
+                    v-model:active-mode="table as string"
+                    :disabled="true"
+                />
+            </template>
+    
+            <template #top-general>
+                <FiltersFilter
+                    title="Действие"
+                    name="action"
+                    :isActive="params.action ? true : false"
+                    :dropdownItems="actions.map(action => ({
+                        title: action.name,
+                        value: action.value,
+                        active: params.action === action.value,
+                    }))"
+                />
+    
+                <FiltersFilter
+                    name="log_type"
+                    :isActive="params.log_type ? true : false"
+                    title="Тип лога"
+                    :dropdownItems="Log.types.map(type => ({
+                        title: type.name,
+                        value: type.value,
+                        active: params.log_type === type.value,
+                    }))"
+                />
+    
+                <FiltersFilter
+                    name="order"
+                    :isActive="params.order ? true : false"
+                    title="Порядок"
+                    :dropdownItems="Log.orders.map(order => ({
+                        title: order.name,
+                        value: order.value,
+                        active: params.order === order.value,
+                    }))"
+                />
+
+                <FiltersFilter
+                    name="time"
+                    title="Время"
+                    :isActive="params.time ? true : false"
+                    :dropdownItems="times.map(_time => ({
+                        title: _time.name,
+                        value: _time.code,
+                        active: params.time === _time.code,
+                    }))"
+                />
+
+                <FiltersFilter
+                    v-if="table !== 'general'"
+                    name="service"
+                    :isActive="params.service ? true : false"
+                    title="Сервис"
+                    :dropdownItems="services.map(service => ({
+                        title: service.name,
+                        value: service.code,
+                        active: params.service === service.code,
+                    }))"
+                />
+            </template>
+    
+            <template #top-right>
+                <FiltersSearchBox
+                
+                />
+            </template>
+    
+            <template #active-filters>
+                <FiltersActiveFilter
+                    v-for="[key, value] in Object.entries(params).filter(([key]) => key !== 'limit' && key !== 'offset')"
+                    :key="key"
+                    :_key="key"
+                    :value="value as string"
+                />
+            </template>
+        </FiltersContainer>
+    
+    
+        <div class="logs-container">
+            <LogsItem
+                v-for="log in data"
+                :key="log.created_at"
+                :log="log"
             />
-        </template>
-
-        <template #top-general>
-            <LogsFilter
-                title="Действие"
-                name="action"
-                icon="fas fa-sliders-h"
-                :activeCount="params.action ? 1 : undefined"
-                iconType="fa"
-                :dropdownItems="Log.actions.map(action => ({
-                    title: action.name,
-                    value: action.value,
-                    active: params.action === action.value,
-                }))"
-            />
-
-            <LogsFilter
-                name="log_type"
-                icon="mdi-information-variant-circle-outline"
-                :activeCount="params.log_type ? 1 : undefined"
-                title="Тип лога"
-                iconType="mdi"
-                :dropdownItems="Log.types.map(type => ({
-                    title: type.name,
-                    value: type.value,
-                    active: params.log_type === type.value,
-                }))"
-            />
-
-            <LogsFilter
-                name="order"
-                :activeCount="params.order ? 1 : undefined"
-                icon="mdi-swap-vertical"
-                title="Порядок"
-                iconType="mdi"
-                :dropdownItems="Log.orders.map(order => ({
-                    title: order.name,
-                    value: order.value,
-                    active: params.order === order.value,
-                }))"
-            />
-        </template>
-
-        <template #top-right>
-            <BaseTabs/>
-        </template>
-
-        <template #active-filters>
-            <LogsActiveFilter
-                v-for="[key, value] in Object.entries(params).filter(([key]) => key !== 'limit' && key !== 'offset')"
-                :key="key"
-                :_key="key"
-                :value="value as string"
-            />
-        </template>
-    </FiltersContainer>
-
-
-    <div class="logs-container">
-        <LogsItem
-            v-for="log in logs"
-            :key="log.created_at"
-            :log="log"
+        </div>
+    
+        <BasePagination
+            v-if="totalPages > 1"
+            :total-pages="totalPages"
         />
-    </div>
-
-    <BasePagination
-        v-if="totalPages > 1"
-        :total-pages="totalPages"
-    />
+    </DashboardCategory>
 </template>
 
 <style scoped>
@@ -142,6 +258,6 @@
         display: flex;
         flex-direction: column;
         padding: 20px;
-        padding-top: 5px;
+        padding-top: 0px;
     }
 </style>

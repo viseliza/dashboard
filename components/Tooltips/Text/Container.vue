@@ -1,10 +1,14 @@
 <script setup lang="ts">
-    defineProps<{
+    type Props = {
         showTooltip: boolean,
         style?: Record<string, string>,
         stylesTooltip?: Record<string, string>,
-        stylesTooltipText?: Record<string, string>
-    }>();
+        stylesTooltipText?: Record<string, string>,
+        zIndex?: number
+    }
+    const props = withDefaults(defineProps<Props>(), {
+        zIndex: 12
+    });
 </script>   
 
 <template>
@@ -51,7 +55,7 @@
         top: 45px;
         left: 0;
         width: 100%;
-        z-index: 12;
+        z-index: v-bind(zIndex);
         padding: 10px;
         border-radius: 5px;
         background-color: var(--inversion-color);
@@ -75,7 +79,7 @@
     }
     .tooltip-container .tooltip.show {
         transform: translateY(0);
-        z-index: 13 !important;
+        z-index: 15 !important;
         opacity: 1;
     }
     .tooltip-container .tooltip.show .tooltip-text {

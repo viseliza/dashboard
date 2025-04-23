@@ -6,18 +6,16 @@
             <slot name="header"></slot>
 
             <main>
-                <slot name="content"></slot>
-            </main>
-            
-            <footer>
-                <div class="footer-left">
-                    <slot name="footer-left"></slot>
-                </div>
+                <slot name="details"></slot>
 
-                <div class="footer-right">
-                    <slot name="footer-right"></slot>
-                </div>
-            </footer>
+                <slot name="content">
+                    <div class="params">
+                        <slot name="params"></slot>
+                    </div>
+
+                    <slot name="footer"></slot>
+                </slot>
+            </main>
         </div>
     </div>
 </template>
@@ -35,13 +33,13 @@
     .backdrop {
         pointer-events: auto;
         display: block;
-        z-index: 10;
+        z-index: 20;
         background-color:rgba(0,0,0,0.2);
     }
     .card-container-wrapper {
         width:100vw;
         height:100vh;
-        z-index: 11;
+        z-index: 21;
     }
     .card-container {
         outline: 3px solid var(--inversion-color);
@@ -52,29 +50,23 @@
         width: 600px;
         height: 700px;
         border-radius: 20px;
-        background: var(--inversion-color);
     }
     .card-container main {
         flex: 1 1 auto;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
-        padding: 20px;
+        border-radius: 0 0 20px 20px;
+        background: var(--inversion-color);
     }
-    .card-container footer {
-        padding: 10px 20px;
-        border-top: 1px solid var(--secondary-color);
+    main .params {
+        background-color: var(--inversion-color);
         display: flex;
-        justify-content: space-between;
-    }
-    .card-container footer .footer-left,
-    .card-container footer .footer-right {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
+        flex-direction: column;
         gap: 10px;
-    }
-    .card-container footer .footer-right {
-        justify-content: flex-end;
+        padding: 20px;
+        padding-top: 10px;
+        overflow-y: auto;
+        flex: 1 1 auto;
     }
 </style>

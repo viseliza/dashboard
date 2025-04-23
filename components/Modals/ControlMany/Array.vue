@@ -1,5 +1,6 @@
 <script setup lang="ts">
     const array = defineModel<any[]>('model');
+    const emit = defineEmits(['add']);
 
     const addItem = () => {
         array.value?.push({
@@ -7,6 +8,7 @@
             auth: false,
             update: false
         });
+        emit('add');
     }
 </script>
 

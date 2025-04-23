@@ -61,12 +61,13 @@ export class QueryParams {
         });
     }
 
-    static removeQuery(key: string) {
+    static removeQuery(data: string) {
         const route = useRoute();
         const router = useRouter();
 
-        const newQuery = { ...route.query }
-        delete newQuery[key]
+        const newQuery = { ...route.query };
+
+        delete newQuery[data];
 
         router.push({ 
             path: route.path, 

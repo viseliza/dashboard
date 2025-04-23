@@ -1,7 +1,7 @@
 <script setup lang="ts">
     const searchValue = shallowRef('');
     const searchHovered = shallowRef(false);
-
+    const searchFocused = shallowRef(false);
     const search = () => {
         if (searchValue.value) {
             QueryParams.updateQueries({
@@ -17,18 +17,26 @@
 
     <div 
         class="searchBox" 
-        :class="{ hovered: searchHovered }"
+        :class="{ hovered: searchHovered || searchFocused }"
         @mouseenter="searchHovered = true" 
         @mouseleave="searchHovered = false"
     >
+        <div class="icon">
+            <v-icon>
+                mdi-barcode-scan
+            </v-icon>
+        </div>
+
         <input 
             class="searchInput"
             type="text"
             name="query"
-            placeholder="Поиск"
+            placeholder="Введите id штриха"
+            @focus="searchFocused = true"
+            @blur="searchFocused = false"
             v-model="searchValue"
         >
-        <button class="searchButton" @click="search">
+        <button v-if="false" class="searchButton" @click="search">
             <v-icon>
                 mdi-magnify
             </v-icon>
@@ -39,21 +47,26 @@
 <style scoped>
     .searchBox {
         outline: 2px solid var(--secondary-color);
-        border-radius: 10px;
+        border-radius: 5px;
         display: flex;
         align-items: center;
     }
     .searchBox.hovered > .searchInput {
         width: 240px;
         padding: 5px 10px;
+        padding-left: 5px;
     }
     .searchBox.hovered > .searchButton {
-        background: var(--secondary-sub-color);
+        border-radius: 0 5px 5px 0;
+        background: var(--secondary-color);
+    }
+    .searchBox .icon {
+        color: var(--text-secondary);
+        padding: 5px;
     }
     .searchButton {
         padding: 5px;
-        outline: 2px solid var(--secondary-color);
-        border-radius: 10px;
+        border-radius: 5px;
         float: right;
         display: flex;
         justify-content: center;

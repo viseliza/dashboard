@@ -3,6 +3,7 @@ import type { AccountMode, IAccount, IAccountCreate, IAccountUpdate } from "~/ty
 /** Модель аккаунта Дурака
  * 
  * @param {string}      param.id
+ * @param {string}      param.nickname
  * @param {string}      param.token
  * @param {number}      param.balance
  * @param {AccountMode} param.mode
@@ -14,6 +15,7 @@ import type { AccountMode, IAccount, IAccountCreate, IAccountUpdate } from "~/ty
 export class Account implements IAccount {
     id: string;
     token: string;
+    nickname: string;
     balance: number;
     mode: AccountMode;
     enable: boolean;
@@ -28,48 +30,13 @@ export class Account implements IAccount {
     constructor(opts: IAccount) {
         this.id         = opts.id;
         this.token      = opts.token;
+        this.nickname   = opts.nickname;
         this.balance    = opts.balance;
         this.mode       = opts.mode;
         this.enable     = opts.enable;
         this.created_at = opts.created_at;
         this.updated_at = opts.updated_at;
         this.data       = opts.data;
-    }
-
-    static updateParams = {
-        id: {
-            type: 'string',
-            example: '1.1.1.1'
-        },
-        mode: {
-            type: ['main', 'farm', 'reserve_main'],
-            example: 'main'
-        }
-    }
-
-    static createParams = {
-        token: {
-            type: 'string',
-            example: '$2a$06$B...'
-        },
-        mode: {
-            type: ['main', 'farm', 'reserve_main'],
-            example: 'main'
-        }
-    }
-
-    getUpdateParams() {
-        return {
-            'id': '',
-            'mode': ''
-        }
-    }
-
-    static getCreateParams() {
-        return {
-            'token': '',
-            'mode': ''
-        }
     }
 }
 

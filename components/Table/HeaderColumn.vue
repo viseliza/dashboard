@@ -19,12 +19,12 @@
             :name="content.icon"
             :is-active="true"
             :style="{ 'fontSize': '12px' }"
+            :z-index="2"
             :styles-tooltip="{ 
                 'top': '35px', 
                 'left': '50%',
                 'transform': 'translateX(-50%)',
-                'padding': '5px 10px', 
-                'zIndex': '2',
+                'padding': '5px 10px',
                 'display': 'flex', 
                 'flexDirection': 'column', 
                 'alignItems': 'center', 
@@ -54,14 +54,7 @@
         justify-content: center;
         align-items: center;
         padding: 6px 5px;
-        background-color: var(--secondary-sub-color);
-        border-bottom: 1px solid var(--secondary-color);
-    }
-    .header-column:first-child {
-        border-radius: 10px 0 0 0 ;
-    }
-    .header-column:last-child {
-        border-radius: 0 10px 0 0;
+        border-bottom: 2px solid var(--secondary-color);
     }
     .header-column div {
         font-size: 12px;

@@ -5,9 +5,10 @@ export default defineNuxtRouteMiddleware((to, from) => {
     
     if (
         to.path !== '/dashboard/login' && 
-        !tokens.access_token && 
-        !tokens.refresh_token
+        (!tokens.access_token || 
+        !tokens.refresh_token)
     ) {
+        console.log(tokens);
         console.log("redirect - To Login");
         return navigateTo('/dashboard/login');
     }

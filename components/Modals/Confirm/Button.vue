@@ -1,13 +1,18 @@
 <script lang="ts" setup>
-    defineProps<{ text: string }>();
-    const accept = defineModel<boolean>('accept');
+    type Props = {
+        text: string;
+        disabled?: boolean;
+    }
+    const props = defineProps<Props>();
+    const emit = defineEmits(['click']);
 </script>
 
 <template>
     <button 
         class="button"
         :class="{ accept: text === 'Подтвердить', cancel: text === 'Отмена' }"
-        @click="accept = text === 'Подтвердить' ? true : false"
+        :disabled="disabled"
+        @click="emit('click', text === 'Подтвердить' ? true : false)"
     >
         {{ text }}
     </button>
@@ -21,6 +26,7 @@
         font-size: 12px;
         font-weight: 700;
         border-radius: 5px;
+        transition: all 0.2s ease;
     }
     .button.accept {
         background: var(--text-primary);
@@ -28,5 +34,10 @@
     }
     .button.cancel {
         outline: 1px solid var(--text-secondary);
+    }
+    .button:disabled {
+        cursor: default;
+        background: var(--text-secondary);
+        color: var(--inversion-color);
     }
 </style>

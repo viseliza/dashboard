@@ -1,8 +1,4 @@
-<script setup lang="ts">    
-</script>
-
-<template>
-    
+<template>    
     <div class="filters-container">
         <div class="filters-container__top">
             <div class="filters-container__top-left">
@@ -70,7 +66,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 15px;
+        gap: 5px;
         padding-left: 15px;
         border-left: 2px solid var(--secondary-color);
     }
